@@ -2,6 +2,7 @@ import torch.nn as nn
 
 from miniTransformer.model.head import MultiHeadAttention, FeedForward
 
+
 class Block(nn.Module):
     """
     Transformer block: communication (self-attention) followed by computation (feed-forward).

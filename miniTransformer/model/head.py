@@ -2,6 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
+
 class Head(nn.Module):
     """
     One head of self-attention in a multi-head self-attention mechanism.
@@ -16,7 +17,7 @@ class Head(nn.Module):
         self.value = nn.Linear(n_embd, head_size, bias=False)
 
         # Register a lower triangular matrix used for masking
-        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+        self.register_buffer("tril", torch.tril(torch.ones(block_size, block_size)))
 
         # Define the dropout layer
         self.dropout = nn.Dropout(dropout)
@@ -33,8 +34,7 @@ class Head(nn.Module):
         wei = q @ k.transpose(-2, -1) * C**-0.5  # (B, T, C) @ (B, C, T) -> (B, T, T)
 
         # Apply the mask to the attention scores
-        wei = wei.masked_fill(self.tril[:T, :T] == 0,
-                              float('-inf'))  # (B, T, T)
+        wei = wei.masked_fill(self.tril[:T, :T] == 0, float("-inf"))  # (B, T, T)
 
         # Normalize the attention scores using the softmax function
         wei = F.softmax(wei, dim=-1)  # (B, T, T)
@@ -61,9 +61,9 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
 
         # Create a module list of self-attention heads
-        self.heads = nn.ModuleList([
-            Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)
-        ])
+        self.heads = nn.ModuleList(
+            [Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
+        )
 
         # Define the output projection linear layer
         self.proj = nn.Linear(n_embd, n_embd)

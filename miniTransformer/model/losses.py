@@ -1,14 +1,17 @@
 import torch
 from miniTransformer.sourcing.sourcing import create_data_batch
 
+
 @torch.no_grad()
-def estimate_loss(model,
-                  train_data,
-                  val_data,
-                  eval_iters,
-                  block_size=None,
-                  batch_size=None,
-                  device=None):
+def estimate_loss(
+    model,
+    train_data,
+    val_data,
+    eval_iters,
+    block_size=None,
+    batch_size=None,
+    device=None,
+):
     """
     Estimate the average loss for the model on training and validation data.
 
@@ -27,18 +30,21 @@ def estimate_loss(model,
     model.eval()
 
     # Loop through both training and validation data splits
-    for split in ['train', 'val']:
+    for split in ["train", "val"]:
         # Initialize a tensor to store loss values
         losses = torch.zeros(eval_iters)
 
         # Loop through the specified number of evaluation iterations
         for k in range(eval_iters):
             # Get a batch of input and target data
-            X, Y = create_data_batch(train_data, val_data,
-                                     split,
-                                     block_size=block_size,
-                                     batch_size=batch_size,
-                                     device=device)
+            X, Y = create_data_batch(
+                train_data,
+                val_data,
+                split,
+                block_size=block_size,
+                batch_size=batch_size,
+                device=device,
+            )
 
             # Calculate the logits and loss for the current batch
             logits, loss = model(X, Y)

@@ -1,5 +1,6 @@
 import torch
 
+
 def load_data(path, name):
     """
     Load the text data from a file and return its content.
@@ -11,7 +12,7 @@ def load_data(path, name):
         text (str): The content of the text file.
     """
     # Read the text file and store its content in a variable
-    with open(f'{path}/{name}', 'r', encoding='utf-8') as f:
+    with open(f"{path}/{name}", "r", encoding="utf-8") as f:
         text = f.read()
 
     print("Length of dataset in characters:", len(text))
@@ -58,7 +59,7 @@ def create_encoder_decoder(char_to_int, int_to_char):
     encode_text = lambda s: [char_to_int[c] for c in s]
 
     # Decoder: convert a list of integers to a string
-    decode_list = lambda l: ''.join([int_to_char[i] for i in l])
+    decode_list = lambda l: "".join([int_to_char[i] for i in l])
 
     return encode_text, decode_list
 
@@ -88,10 +89,9 @@ def create_train_val_splits(encoded_text, train_ratio=0.9):
     return train_data, val_data
 
 
-def create_data_batch(train_data, val_data, split,
-                      block_size=None,
-                      batch_size=None,
-                      device=None):
+def create_data_batch(
+    train_data, val_data, split, block_size=None, batch_size=None, device=None
+):
     """
     Generate a small batch of data consisting of inputs and targets.
 
@@ -105,23 +105,20 @@ def create_data_batch(train_data, val_data, split,
         input_batch (torch.Tensor): A tensor containing the input data sequences.
         target_batch (torch.Tensor): A tensor containing the target data sequences.
     """
-    data = train_data if split == 'train' else val_data
+    data = train_data if split == "train" else val_data
 
-    indices = torch.randint(len(data) - block_size, (batch_size, ))
+    indices = torch.randint(len(data) - block_size, (batch_size,))
 
-    input_batch = torch.stack([data[i:i + block_size] for i in indices])
+    input_batch = torch.stack([data[i : i + block_size] for i in indices])
 
-    target_batch = torch.stack(
-        [data[i + 1:i + block_size + 1] for i in indices])
+    target_batch = torch.stack([data[i + 1 : i + block_size + 1] for i in indices])
 
     input_batch, target_batch = input_batch.to(device), target_batch.to(device)
 
     return input_batch, target_batch
 
 
-
 if __name__ == "__main__":
-
     text = "Hello, World!"
 
     # Create character to integer and integer to character mappings
@@ -134,8 +131,7 @@ if __name__ == "__main__":
     encoded_text = encode_text(text)
 
     # Create training and validation data splits
-    train_data, val_data = create_train_val_splits(encoded_text,
-                                                   train_ratio=0.9)
+    train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
 
     # Display the training and validation data
     print("Train data:", train_data)

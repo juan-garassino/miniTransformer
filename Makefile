@@ -8,7 +8,7 @@ check_code:
 	@flake8 scripts/* miniTransformer/*.py
 
 black:
-	@black scripts/* miniTransformer/*.py
+	@black scripts/* miniTransformer/*.py miniTransformer/*/*.py
 
 test:
 	@coverage run -m pytest tests/*.py
