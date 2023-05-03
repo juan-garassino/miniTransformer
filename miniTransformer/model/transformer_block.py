@@ -1,27 +1,34 @@
-import tensorflow as tf
+import torch.nn as nn
 
+from miniTransformer.model.head import MultiHeadAttention, FeedForward
 
-class TransformerBlock(tf.keras.layers.Layer):
+class Block(nn.Module):
+    """
+    Transformer block: communication (self-attention) followed by computation (feed-forward).
+    """
 
-    def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1):
-        super(TransformerBlock, self).__init__()
-        self.att = tf.keras.layers.MultiHeadAttention(num_heads=num_heads,
-                                                      key_dim=embed_dim)
-        self.ffn = tf.keras.Sequential([
-            tf.keras.layers.Dense(ff_dim, activation='relu'),
-            tf.keras.layers.Dense(embed_dim)
-        ])
-        self.layernorm1 = tf.keras.layers.LayerNormalization(epsilon=1e-6)
-        self.layernorm2 = tf.keras.layers.LayerNormalization(epsilon=1e-6)
-        self.dropout1 = tf.keras.layers.Dropout(rate)
-        self.dropout2 = tf.keras.layers.Dropout(rate)
-        self.proj = tf.keras.layers.Dense(embed_dim)
+    def __init__(self, n_embd, n_head, dropout):
+        # n_embd: embedding dimension, n_head: the number of heads we'd like
+        super().__init__()
 
-    def call(self, inputs, training):
-        attn_output = self.att(inputs, inputs)
-        attn_output = self.dropout1(attn_output, training=training)
-        attn_output = self.proj(attn_output)
-        out1 = self.layernorm1(inputs + attn_output)
-        ffn_output = self.ffn(out1)
-        ffn_output = self.dropout2(ffn_output, training=training)
-        return self.layernorm2(out1 + ffn_output)
+        # Calculate head_size by dividing the embedding dimension by the number of heads
+        head_size = n_embd // n_head
+
+        # Instantiate the multi-head self-attention layer
+        self.sa = MultiHeadAttention(n_head, head_size, n_embd, dropout)
+
+        # Instantiate the feed-forward layer
+        self.ffwd = FeedForward(n_embd, dropout)
+
+        # Instantiate the layer normalization layers
+        self.ln1 = nn.LayerNorm(n_embd)
+        self.ln2 = nn.LayerNorm(n_embd)
+
+    def forward(self, x):
+        # Apply the multi-head self-attention layer and add the residual connection
+        x = x + self.sa(self.ln1(x))
+
+        # Apply the feed-forward layer and add the residual connection
+        x = x + self.ffwd(self.ln2(x))
+
+        return x
