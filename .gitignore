@@ -6,5 +6,3 @@ raw_data/
 *.csv
 **/__pycache__/
 .env
-
-miniTransformer/data
