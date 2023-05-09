@@ -26,10 +26,12 @@ class Block(nn.Module):
         self.ln2 = nn.LayerNorm(n_embd)
 
     def forward(self, x):
-        # Apply the multi-head self-attention layer and add the residual connection
-        x = x + self.sa(self.ln1(x))
+        x_norm = self.ln1(x)
+        x_att, attns = self.sa(x_norm)
+        x = x + x_att
 
         # Apply the feed-forward layer and add the residual connection
         x = x + self.ffwd(self.ln2(x))
 
-        return x
+        # Return the output and the attention matrices, keys, queries, and values
+        return x, attns

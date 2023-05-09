@@ -61,9 +61,9 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
 
         # Create a module list of self-attention heads
-        self.heads = nn.ModuleList(
-            [Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
-        )
+        self.heads = nn.ModuleList([
+            Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)
+        ])
 
         # Define the output projection linear layer
         self.proj = nn.Linear(n_embd, n_embd)
@@ -75,10 +75,14 @@ class MultiHeadAttention(nn.Module):
         # Concatenate the outputs of each head along the last dimension
         out = torch.cat([h(x)[0] for h in self.heads], dim=-1)
 
+        # Collect attention matrices, keys, queries, and values from each head
+        attns = [h(x)[1:] for h in self.heads]
+
         # Apply the output projection and dropout
         out = self.dropout(self.proj(out))
 
-        return out
+        return out, attns
+
 
 
 class FeedForward(nn.Module):

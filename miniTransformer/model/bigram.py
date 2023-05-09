@@ -13,7 +13,8 @@ class BigramLanguageModel(nn.Module):
     A simple bigram language model using a Transformer architecture.
     """
 
-    def __init__(self, vocab_size, n_embd, block_size, n_head, n_layer, device):
+    def __init__(self, vocab_size, n_embd, block_size, n_head, n_layer,
+                 device):
         super().__init__()
 
         # Define the token and position embedding tables
@@ -22,8 +23,7 @@ class BigramLanguageModel(nn.Module):
 
         # Create the Transformer blocks
         self.blocks = nn.Sequential(
-            *[Block(n_embd, n_head, dropout) for _ in range(n_layer)]
-        )
+            *[Block(n_embd, n_head, dropout) for _ in range(n_layer)])
 
         # Define the final layer normalization layer
         self.ln_f = nn.LayerNorm(n_embd)
@@ -39,14 +39,14 @@ class BigramLanguageModel(nn.Module):
         # Get the token and position embeddings
         tok_emb = self.token_embedding_table(idx)  # (B, T, C)
         pos_emb = self.position_embedding_table(
-            torch.arange(T, device=self.device)
-        )  # (T, C)
+            torch.arange(T, device=self.device))  # (T, C)
 
         # Combine the token and position embeddings
         x = tok_emb + pos_emb  # (B, T, C)
 
         # Pass the combined embeddings through the Transformer blocks
-        x = self.blocks(x)  # (B, T, C)
+        for block in self.blocks:
+            x, _ = block(x)  # (B, T, C)
 
         # Apply the final layer normalization
         x = self.ln_f(x)  # (B, T, C)
@@ -65,12 +65,6 @@ class BigramLanguageModel(nn.Module):
 
         return logits, loss
 
-    def generate_iter(self, idx, max_new_tokens):
-        for _ in range(max_new_tokens):
-            idx_cond = idx[:, -block_size:]
-            logits, loss = self(idx_cond)
-            logits = logits[:, -1, :]
-            probs = F.softmax(logits, dim=-1)
-            idx_next = torch.multinomial(probs, num_samples=1)
-            idx = torch.cat((idx, idx_next), dim=1)
-            yield idx_next
+    @property
+    def attention_heads(self):
+        return self.blocks[0].sa.heads

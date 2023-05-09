@@ -1,103 +1,93 @@
+import argparse
+from miniTransformer.trainer.train import train, generate_text, BigramLanguageModel
+from miniTransformer.sourcing.sourcing import load_data, create_char_mappings
+from miniTransformer.visuzalization.visualize_attention import create_animation
 import torch
-import os
 
-from miniTransformer.model.bigram import BigramLanguageModel
-from miniTransformer.model.losses import estimate_loss
-from miniTransformer.sourcing.sourcing import (
-    create_data_batch,
-    create_char_mappings,
-    create_encoder_decoder,
-    create_train_val_splits,
-    load_data,
-)
 
-# Define hyperparameters and other constants
-batch_size = 16
-block_size = 32
-max_iters = 500
-eval_interval = 100
-learning_rate = 1e-3
-device = "cuda" if torch.cuda.is_available() else "cpu"
-eval_iters = 200
-n_embd = 64
-n_head = 4
-n_layer = 4
-dropout = 0.0
-colab=1
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
 
-# Define the data file path
-if colab == 1:
-    path = "/content/miniTransformer/miniTransformer/data/"
-else:
-    path = "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
-
-name = "input.txt"
-
-# Load the data from the file
-text = load_data(path, name)
-
-# Create character to integer and integer to character mappings
-char_to_int, int_to_char, vocab_size = create_char_mappings(text)
-
-# Create encoder and decoder functions
-encode_text, decode_list = create_encoder_decoder(char_to_int, int_to_char)
-
-# Encode the input text
-encoded_text = encode_text(text)
-
-# Create training and validation data splits
-train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
-
-# Instantiate the BigramLanguageModel
-model = BigramLanguageModel(vocab_size, n_embd, block_size, n_head, n_layer, device)
-
-# Move the model to the device (CPU or GPU)
-m = model.to(device)
-
-# Print the number of parameters in the model
-print(sum(p.numel() for p in m.parameters()) / 1e6, "M parameters")
-
-# Create a PyTorch optimizer
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-
-# Main training loop
-for iter in range(max_iters):
-    # Evaluate the loss on train and val sets periodically
-    if iter % eval_interval == 0 or iter == max_iters - 1:
-        losses = estimate_loss(
-            model,
-            train_data,
-            val_data,
-            eval_iters,
-            block_size=block_size,
-            batch_size=batch_size,
-            device=device,
-        )
-        print(
-            f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}"
-        )
-
-    # Sample a batch of data
-    xb, yb = create_data_batch(
-        train_data,
-        val_data,
-        "train",
-        block_size=block_size,
-        batch_size=batch_size,
-        device=device,
+    parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--block_size", type=int, default=32)
+    parser.add_argument("--max_iters", type=int, default=500)
+    parser.add_argument("--eval_interval", type=int, default=100)
+    parser.add_argument("--learning_rate", type=float, default=1e-3)
+    parser.add_argument(
+        "--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
+    parser.add_argument("--eval_iters", type=int, default=200)
+    parser.add_argument("--n_embd", type=int, default=64)
+    parser.add_argument("--n_head", type=int, default=4)
+    parser.add_argument("--n_layer", type=int, default=4)
+    parser.add_argument("--dropout", type=float, default=0.0)
+    parser.add_argument("--colab", type=int, default=1)
+    parser.add_argument(
+        "--path",
+        type=str,
+        default="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data",
+    )
+    parser.add_argument("--name", type=str, default="input.txt")
+    parser.add_argument("--save_interval", type=int, default=100)
+    parser.add_argument("--checkpoint_dir", type=str, default="checkpoints")
+    parser.add_argument("--generate", action="store_true")
+    parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument(
+        "--heatmap_interval",
+        type=int,
+        default=100,
+        help="Interval between saving attention heatmaps.",
     )
 
-    # Evaluate the loss and update the model
-    logits, loss = model(xb, yb)
-    optimizer.zero_grad(set_to_none=True)
-    loss.backward()
-    optimizer.step()
+    args = parser.parse_args()
+    return args
 
-# Generate text from the trained model
-context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-generated_tokens = m.generate_iter(context, max_new_tokens=20000)
+if __name__ == "__main__":
+    args = parse_arguments()
+    if args.generate:
+        if args.checkpoint:
+            device = torch.device(args.device)
+            checkpoint = torch.load(args.checkpoint, map_location=device)
+            model_state_dict = checkpoint["model_state_dict"]
 
-for token in generated_tokens:
-    char = int_to_char[token.item()]
-    print(char, end="", flush=True)
+            char_to_int, int_to_char, vocab_size = create_char_mappings(
+                load_data(args.path, args.name)
+            )
+            model = BigramLanguageModel(
+                vocab_size,
+                args.n_embd,
+                args.block_size,
+                args.n_head,
+                args.n_layer,
+                device,
+            ).to(device)
+            model.load_state_dict(model_state_dict)
+            model.eval()
+            generate_text(model, int_to_char, device)
+        else:
+            print("Please provide a checkpoint file to generate text.")
+    else:
+        train(
+            batch_size=args.batch_size,
+            block_size=args.block_size,
+            max_iters=args.max_iters,
+            eval_interval=args.eval_interval,
+            learning_rate=args.learning_rate,
+            device=args.device,
+            eval_iters=args.eval_iters,
+            n_embd=args.n_embd,
+            n_head=args.n_head,
+            n_layer=args.n_layer,
+            dropout=args.dropout,
+            colab=args.colab,
+            path=args.path,
+            name=args.name,
+            heatmap_interval=args.heatmap_interval,  # Make sure this argument is included
+            save_interval=args.save_interval,  # Add this argument
+            checkpoint_dir=args.checkpoint_dir,
+        )  # Add this argument
+
+        tensor_names = ["Keys", "Values", "Queries"]
+
+        create_animation("heatmaps", "animation.gif", tensor_names)

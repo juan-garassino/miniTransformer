@@ -11,6 +11,9 @@ scikit-learn
 tensorflow
 torch
 torchvision
+imageio
+matplotlib
+seaborn
 
 # tests/linter
 black
