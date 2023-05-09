@@ -23,9 +23,13 @@ n_embd = 64
 n_head = 4
 n_layer = 4
 dropout = 0.0
+colab=1
 
 # Define the data file path
-path = "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
+if colab == 1:
+    path = "/content/miniTransformer/miniTransformer/data/"
+else:
+    path = "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
 
 name = "input.txt"
 
