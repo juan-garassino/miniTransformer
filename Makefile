@@ -25,6 +25,9 @@ clean:
 	@rm -fr miniTransformer-*.dist-info
 	@rm -fr miniTransformer.egg-info
 
+run_model:
+	python -m miniTransformer.main
+
 install:
 	@pip install . -U
 
