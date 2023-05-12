@@ -29,10 +29,28 @@ run_model:
 	python -m miniTransformer.main
 
 run_training:
-	python -m miniTransformer.main --batch_size 16 --block_size 32 --max_iters 500 --eval_interval 100 --learning_rate 1e-3 --device cpu --eval_iters 200 --n_embd 64 --n_head 16 --n_layer 16 --dropout 0.0 --colab 1 --path /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/ --name input.txt --heatmap_interval 100 --checkpoint_dir /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints
+	python -m miniTransformer.main \
+	--batch_size 16 \
+	--block_size 32 \
+	--max_iters 101 \
+	--eval_interval 100 \
+	--learning_rate 1e-3 \
+	--device cpu \
+	--eval_iters 200 \
+	--n_embd 64 \
+	--n_head 4 \
+	--n_layer 4 \
+	--dropout 0.0 \
+	--colab 1 \
+	--path /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/ \
+	--name input.txt \
+	--heatmap_interval 100 \
+	--checkpoint_dir /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints
 
 run_generation:
-	python -m miniTransformer.main --generate --checkpoint /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints/checkpoint_499.pt
+	python -m miniTransformer.main \
+	--generate \
+	--checkpoint /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints/checkpoint_499.pt
 
 install:
 	@pip install . -U

@@ -87,7 +87,3 @@ if __name__ == "__main__":
             save_interval=args.save_interval,  # Add this argument
             checkpoint_dir=args.checkpoint_dir,
         )  # Add this argument
-
-        tensor_names = ["Keys", "Values", "Queries"]
-
-        create_animation("heatmaps", "animation.gif", tensor_names)

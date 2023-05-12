@@ -15,7 +15,7 @@ def load_data(path, name):
     with open(f"{path}/{name}", "r", encoding="utf-8") as f:
         text = f.read()
 
-    print("Length of dataset in characters:", len(text))
+    print(f"\n✅ Length of dataset in characters: {len(text)}")
 
     return text
 

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from colorama import Fore, Style
 from miniTransformer.model.transformer_block import Block
 
 dropout = 0.0
@@ -11,11 +11,20 @@ block_size = 32  # what is the maximum context length for predictions?
 class BigramLanguageModel(nn.Module):
     """
     A simple bigram language model using a Transformer architecture.
+
+    Args:
+        vocab_size (int): The size of the vocabulary.
+        n_embd (int): The size of the token and position embeddings.
+        block_size (int): The sequence length (block size) of the input.
+        n_head (int): The number of attention heads.
+        n_layer (int): The number of Transformer layers.
+        device (torch.device): The device to run the model on (CPU or GPU).
     """
 
-    def __init__(self, vocab_size, n_embd, block_size, n_head, n_layer,
-                 device):
+    def __init__(self, vocab_size, n_embd, block_size, n_head, n_layer, device):
         super().__init__()
+
+        print(f"\n✅ {Fore.CYAN}BigramLanguageModel Initialized...{Style.RESET_ALL}")
 
         # Define the token and position embedding tables
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
@@ -23,7 +32,8 @@ class BigramLanguageModel(nn.Module):
 
         # Create the Transformer blocks
         self.blocks = nn.Sequential(
-            *[Block(n_embd, n_head, dropout) for _ in range(n_layer)])
+            *[Block(n_embd, n_head, dropout) for _ in range(n_layer)]
+        )
 
         # Define the final layer normalization layer
         self.ln_f = nn.LayerNorm(n_embd)
@@ -33,13 +43,30 @@ class BigramLanguageModel(nn.Module):
 
         self.device = device
 
+        print(f"\n🔢 {Fore.YELLOW}Number of Attention Heads: {n_head}{Style.RESET_ALL}")
+        print(f"\n🔢 {Fore.YELLOW}Embedding Size: {n_embd}{Style.RESET_ALL}")
+
+        print(f"\n🔢 {Fore.YELLOW}Block Size: {block_size}{Style.RESET_ALL}")
+
     def forward(self, idx, targets=None):
+        """
+        Forward pass through the BigramLanguageModel.
+
+        Args:
+            idx (torch.Tensor): The input tensor of shape (batch_size, sequence_length).
+            targets (torch.Tensor, optional): The target tensor of shape (batch_size, sequence_length).
+
+        Returns:
+            logits (torch.Tensor): The logits tensor of shape (batch_size, sequence_length, vocab_size).
+            loss (torch.Tensor): The loss tensor (scalar) if targets are provided, else None.
+        """
         B, T = idx.shape
 
         # Get the token and position embeddings
         tok_emb = self.token_embedding_table(idx)  # (B, T, C)
         pos_emb = self.position_embedding_table(
-            torch.arange(T, device=self.device))  # (T, C)
+            torch.arange(T, device=self.device)
+        )  # (T, C)
 
         # Combine the token and position embeddings
         x = tok_emb + pos_emb  # (B, T, C)
@@ -67,4 +94,10 @@ class BigramLanguageModel(nn.Module):
 
     @property
     def attention_heads(self):
+        """
+        A property that returns the attention heads from the first Transformer block.
+
+        Returns:
+            attention_heads (list): A list of attention heads from the first Transformer block.
+        """
         return self.blocks[0].sa.heads

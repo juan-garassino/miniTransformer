@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from colorama import Fore, Style
 
 
 class Head(nn.Module):
@@ -8,13 +9,14 @@ class Head(nn.Module):
     One head of self-attention in a multi-head self-attention mechanism.
     """
 
-    def __init__(self, head_size, n_embd, block_size, dropout):
+    def __init__(self, head_size, n_embd, block_size, dropout, verbose=False):
         super().__init__()
 
         # Define the key, query, and value linear layers without bias
         self.key = nn.Linear(n_embd, head_size, bias=False)
         self.query = nn.Linear(n_embd, head_size, bias=False)
         self.value = nn.Linear(n_embd, head_size, bias=False)
+        self.verbose = verbose
 
         # Register a lower triangular matrix used for masking
         self.register_buffer("tril", torch.tril(torch.ones(block_size, block_size)))
@@ -25,6 +27,8 @@ class Head(nn.Module):
     def forward(self, x):
         # Get the dimensions of the input tensor
         B, T, C = x.shape
+
+        # print(Fore.YELLOW + f"\nX shape {x.shape}" + Style.RESET_ALL)
 
         # Calculate the keys, queries, and values using the linear layers
         k = self.key(x)  # (B, T, C)
@@ -48,6 +52,17 @@ class Head(nn.Module):
         # Perform the weighted aggregation of the values
         out = wei @ v  # (B, T, T) @ (B, T, C) -> (B, T, C)
 
+        if self.verbose:
+            print(Fore.YELLOW + f"\nKeys shape {k.shape}" + Style.RESET_ALL)
+
+            print(Fore.CYAN + f"\nQueries shape {q.shape}" + Style.RESET_ALL)
+
+            print(Fore.MAGENTA + f"\nWeights shape {wei.shape}" + Style.RESET_ALL)
+
+            print(Fore.GREEN + f"\nValues shape {v.shape}" + Style.RESET_ALL)
+
+            print(Fore.BLUE + f"\nOutput shape {out.shape}" + Style.RESET_ALL)
+
         # Return the output, keys, queries, and values
         return out, k, q, v
 
@@ -61,9 +76,9 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
 
         # Create a module list of self-attention heads
-        self.heads = nn.ModuleList([
-            Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)
-        ])
+        self.heads = nn.ModuleList(
+            [Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
+        )
 
         # Define the output projection linear layer
         self.proj = nn.Linear(n_embd, n_embd)
@@ -78,11 +93,13 @@ class MultiHeadAttention(nn.Module):
         # Collect attention matrices, keys, queries, and values from each head
         attns = [h(x)[1:] for h in self.heads]
 
+        # print([type(attn) for attn in attns])
+        # print([attn.shape for attn in attns])
+
         # Apply the output projection and dropout
         out = self.dropout(self.proj(out))
 
         return out, attns
-
 
 
 class FeedForward(nn.Module):
