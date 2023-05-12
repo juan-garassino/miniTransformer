@@ -84,7 +84,7 @@ def create_animation(
             images.append(imageio.imread(file_path))
 
         output_path = os.path.join(animation_dir, f"{tensor_name}_animation.gif")
-        imageio.mimsave(output_path, images, duration=20)
+        imageio.mimsave(output_path, images, duration=200)
 
         print(f"\n🎦 {Fore.BLUE}Animation saved to {output_path}{Style.RESET_ALL}")
 

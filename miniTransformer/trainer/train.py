@@ -20,7 +20,8 @@ def save_checkpoint(model, optimizer, epoch, filename):
     }
     torch.save(checkpoint, filename)
 
-    print(f"\n✅ {Fore.YELLOW}Saved checkpoint at step {iter}{Style.RESET_ALL}")
+    print(
+        f"\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
 def generate_text(model, int_to_char, device, max_new_tokens=20000):
@@ -79,7 +80,9 @@ def train(
     print(f"\n🔀 {Fore.CYAN}Creating character mappings...{Style.RESET_ALL}")
     char_to_int, int_to_char, vocab_size = create_char_mappings(text)
 
-    print(f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}")
+    print(
+        f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}"
+    )
     encode_text, decode_list = create_encoder_decoder(char_to_int, int_to_char)
 
     print(f"\n🔤 {Fore.CYAN}Encoding the input text...{Style.RESET_ALL}")
@@ -90,7 +93,9 @@ def train(
     )
     train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
 
-    print(f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}")
+    print(
+        f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}"
+    )
     model = BigramLanguageModel(vocab_size, n_embd, block_size, n_head, n_layer, device)
 
     m = model.to(device)
@@ -99,9 +104,20 @@ def train(
     print(f"\n✅ {Fore.CYAN}Creating a PyTorch optimizer...{Style.RESET_ALL}")
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
-    print(f"\n✅ {Fore.CYAN}Starting the main training loop...{Style.RESET_ALL}")
+    print(
+        f"\n✅ {Fore.CYAN}Starting the main training loop...{Style.RESET_ALL}")
+
     for iter in range(max_iters):
+
         if iter % save_interval == 0 or iter == max_iters - 1:
+
+            if not os.path.exists(checkpoint_dir):
+                os.makedirs(checkpoint_dir)
+
+            print(
+                f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}"
+            )
+
             save_checkpoint(
                 model,
                 optimizer,
@@ -109,22 +125,10 @@ def train(
                 os.path.join(checkpoint_dir, f"checkpoint_{iter}.pt"),
             )
 
-            if iter % eval_interval == 0 or iter == max_iters - 1:
-                losses = estimate_loss(
-                    model,
-                    train_data,
-                    val_data,
-                    eval_iters,
-                    block_size=block_size,
-                    batch_size=batch_size,
-                    device=device,
-                )
-                print(
-                    f"\n✅ {Fore.MAGENTA}step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}"
-                )
-
             # Sample a batch of data
-            print(f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
+            print(
+                f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
+
             xb, yb = create_data_batch(
                 train_data,
                 val_data,
@@ -136,28 +140,53 @@ def train(
 
             # Evaluate the loss and update the model
             print(
-                f"\n✅ {Fore.CYAN}Evaluating the loss and updating the model...{Style.RESET_ALL}"
+                f"\n✅ {Fore.CYAN}Updating the model parameters...{Style.RESET_ALL}"
             )
+
             logits, loss = model(xb, yb)
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             optimizer.step()
 
-            # Save attention heatmaps periodically
-            if iter % heatmap_interval == 0 or iter == max_iters - 1:
-                print(f"\n✅ {Fore.CYAN}Saving attention heatmaps...{Style.RESET_ALL}")
-                input_tensors = [
-                    [head.key.weight for head in model.attention_heads],
-                    [head.value.weight for head in model.attention_heads],
-                    [head.query.weight for head in model.attention_heads],
-                ]
-                tensor_names = ["Keys", "Values", "Queries"]
+        if iter % eval_interval == 0 or iter == max_iters - 1:
 
-                visualize_attention(input_tensors, tensor_names, iter_num=iter)
+            print(
+                f"\n✅ {Fore.CYAN}Evaluating model loss...{Style.RESET_ALL}"
+            )
 
-                print(
-                    f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
-                )
+            losses = estimate_loss(
+                model,
+                train_data,
+                val_data,
+                eval_iters,
+                block_size=block_size,
+                batch_size=batch_size,
+                device=device,
+            )
+            print(
+                f"\n✅ {Fore.MAGENTA}step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}"
+            )
+
+        # Save attention heatmaps periodically
+        if iter % heatmap_interval == 0 or iter == max_iters - 1:
+            print(
+                f"\n✅ {Fore.CYAN}Saving attention heatmaps...{Style.RESET_ALL}"
+            )
+            input_tensors = [
+                [head.key.weight for head in model.attention_heads],
+                [head.value.weight for head in model.attention_heads],
+                [head.query.weight for head in model.attention_heads],
+            ]
+            tensor_names = ["Keys", "Values", "Queries"]
+
+            visualize_attention(input_tensors, tensor_names, iter_num=iter)
+
+            print(
+                f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
+            )
+
+
+
 
 
 # "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
