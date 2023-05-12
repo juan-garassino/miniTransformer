@@ -3,7 +3,7 @@ from miniTransformer.trainer.train import train, generate_text, BigramLanguageMo
 from miniTransformer.sourcing.sourcing import load_data, create_char_mappings
 from miniTransformer.visuzalization.visualize_attention import create_animation
 import torch
-
+import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
@@ -64,7 +64,10 @@ if __name__ == "__main__":
             ).to(device)
             model.load_state_dict(model_state_dict)
             model.eval()
-            generate_text(model, int_to_char, device)
+            for char in generate_text(model, int_to_char, device):
+                print(char, end="", flush=True)
+                sys.stdout.flush()
+
         else:
             print("Please provide a checkpoint file to generate text.")
     else:

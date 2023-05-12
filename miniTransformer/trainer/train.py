@@ -10,7 +10,7 @@ from miniTransformer.sourcing.sourcing import (
 from miniTransformer.model.bigram import BigramLanguageModel
 from miniTransformer.model.losses import estimate_loss, create_data_batch
 from miniTransformer.visuzalization.visualize_attention import visualize_attention
-
+import sys
 
 def save_checkpoint(model, optimizer, epoch, filename):
     checkpoint = {
@@ -24,14 +24,20 @@ def save_checkpoint(model, optimizer, epoch, filename):
         f"\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
-def generate_text(model, int_to_char, device, max_new_tokens=20000):
+import sys
+
+
+def generate_text(model, int_to_char, device, max_new_tokens=2000):
     context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-    generated_tokens = model.generate_iter(context, max_new_tokens=max_new_tokens)
+    generated_tokens = model.generate_iter(context,
+                                           max_new_tokens=max_new_tokens)
 
-    for token in generated_tokens:
-        char = int_to_char[token.item()]
-        print(char, end="", flush=True)
+    for tokens in generated_tokens:
+        for token in tokens:
+            token = token.item()
+            char = int_to_char[token]
+            yield char
 
 
 def train(
