@@ -9,9 +9,8 @@ import os
 import glob
 
 
-def plot_heatmaps(
-    axes, input_tensor_np, tensor_name, num_heatmaps, grid_size, font_size, cmap
-):
+def plot_heatmaps(axes, input_tensor_np, tensor_name, num_heatmaps, grid_size,
+                  font_size, cmap):
     """
     Plot heatmaps for the input tensor in the specified axes.
 
@@ -36,6 +35,8 @@ def plot_heatmaps(
         )
         ax.set_title(f"Heatmap {j + 1} {tensor_name}", fontsize=font_size)
         ax.tick_params(axis="both", which="both", labelsize=font_size)
+        ax.set_xlabel("Input Sequence Position", fontsize=font_size)
+        ax.set_ylabel("Attention Distribution", fontsize=font_size)
 
 
 def save_plot(output_dir, tensor_name, iter_num):

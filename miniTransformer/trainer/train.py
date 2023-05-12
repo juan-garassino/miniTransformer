@@ -125,6 +125,8 @@ def train(
                 os.path.join(checkpoint_dir, f"checkpoint_{iter}.pt"),
             )
 
+            # HERE WAS THE EVALUATION INDENTED INSIDE HERE
+
             # Sample a batch of data
             print(
                 f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
@@ -167,6 +169,8 @@ def train(
                 f"\n✅ {Fore.MAGENTA}step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}"
             )
 
+        # THIS WAS ALSO INDENTED INSIDE
+
         # Save attention heatmaps periodically
         if iter % heatmap_interval == 0 or iter == max_iters - 1:
             print(
@@ -184,10 +188,6 @@ def train(
             print(
                 f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
             )
-
-
-
-
 
 # "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
 if __name__ == "__main__":
