@@ -39,6 +39,7 @@ def parse_arguments():
         default=100,
         help="Interval between saving attention heatmaps.",
     )
+    parser.add_argument("--n_of_char", type=int, default=100)
 
     args = parser.parse_args()
     return args
@@ -48,12 +49,24 @@ if __name__ == "__main__":
     args = parse_arguments()
     if args.generate:
         if args.colab == 0:
-            args.checkpoint= os.path.join(os.environ.get('HOME'), "Users", "juan-garassino", "Code", "juan-garassino", "miniTransformer", "miniTransformer", "checkpoints")
+            args.checkpoint_dir = os.path.join(os.environ.get('HOME'), "Code",
+                                               "juan-garassino",
+                                               "miniTransformer",
+                                               "miniTransformer",
+                                               "checkpoints")
+            checkpoint_dir = args.checkpoint_dir,
         else:
-            args.checkpoint= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "checkpoints")
+            args.checkpoint_dir = os.path.join(os.environ.get('HOME'), "..",
+                                               "content", "miniTransformer",
+                                               "miniTransformer",
+                                               "checkpoints")
+            checkpoint_dir = args.checkpoint_dir,
         if args.checkpoint:
             device = torch.device(args.device)
-            checkpoint = torch.load(args.checkpoint, map_location=device)
+            print(checkpoint_dir)
+            print(args.checkpoint)
+            checkpoint = torch.load(os.path.join(checkpoint_dir[0], args.checkpoint),
+                                    map_location=device)
             model_state_dict = checkpoint["model_state_dict"]
 
             char_to_int, int_to_char, vocab_size = create_char_mappings(
@@ -71,7 +84,12 @@ if __name__ == "__main__":
 
             model.eval()
 
-            for char in generate_text(model, int_to_char, device):
+            print("\n")
+
+            for char in generate_text(model,
+                                      int_to_char,
+                                      device,
+                                      max_new_tokens=args.n_of_char):
                 print(char, end="", flush=True)
                 sys.stdout.flush()
 

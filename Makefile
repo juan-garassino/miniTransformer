@@ -51,7 +51,10 @@ run_training:
 run_generation:
 	python -m miniTransformer.main \
 	--generate \
-	--checkpoint /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints/checkpoint_1000.pt
+	--colab 0 \
+	--checkpoint_dir /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints \
+	--checkpoint checkpoint_499.pt \
+	--n_of_char 2000
 
 install:
 	@pip install . -U
