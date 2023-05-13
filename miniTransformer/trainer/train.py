@@ -215,8 +215,8 @@ if __name__ == "__main__":
         n_layer=4,
         dropout=0.0,
         colab=1,
-        path="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/",
+        path=os.path.join(os.environ.get('HOME'), "Users", "juan-garassino", "Code", "juan-garassino", "miniTransformer", "miniTransformer", "data"),
         name="input.txt",
         save_interval=100,
-        checkpoint_dir="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints",
+        checkpoint_dir=os.path.join(os.environ.get('HOME'), "Users", "juan-garassino", "Code", "juan-garassino", "miniTransformer", "miniTransformer", "checkpoints")
     )

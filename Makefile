@@ -41,7 +41,7 @@ run_training:
 	--n_head 4 \
 	--n_layer 4 \
 	--dropout 0.0 \
-	--colab 1 \
+	--colab 0 \
 	--path /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/ \
 	--name input.txt \
 	--save_interval 1000 \

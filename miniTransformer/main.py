@@ -4,6 +4,7 @@ from miniTransformer.sourcing.sourcing import load_data, create_char_mappings
 from miniTransformer.visuzalization.visualize_attention import create_animation
 import torch
 import sys
+import os
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
@@ -46,6 +47,10 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
     if args.generate:
+        if args.colab == 0:
+            args.checkpoint= os.path.join(os.environ.get('HOME'), "Users", "juan-garassino", "Code", "juan-garassino", "miniTransformer", "miniTransformer", "checkpoints")
+        else:
+            args.checkpoint= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "checkpoints")
         if args.checkpoint:
             device = torch.device(args.device)
             checkpoint = torch.load(args.checkpoint, map_location=device)
@@ -74,6 +79,12 @@ if __name__ == "__main__":
         else:
             print("Please provide a checkpoint file to generate text.")
     else:
+        if args.colab == 0:
+            args.path= os.path.join(os.environ.get('HOME'), "Code", "juan-garassino", "miniTransformer", "miniTransformer", "data")
+            args.checkpoint= os.path.join(os.environ.get('HOME'), "Code", "juan-garassino", "miniTransformer", "miniTransformer", "checkpoints")
+        else:
+            args.path= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "data")
+            args.checkpoint= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "checkpoints")
         train(
             batch_size=args.batch_size,
             block_size=args.block_size,
