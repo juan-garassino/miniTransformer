@@ -63,10 +63,13 @@ if __name__ == "__main__":
                 device,
             ).to(device)
             model.load_state_dict(model_state_dict)
+
             model.eval()
+
             for char in generate_text(model, int_to_char, device):
                 print(char, end="", flush=True)
                 sys.stdout.flush()
+
 
         else:
             print("Please provide a checkpoint file to generate text.")

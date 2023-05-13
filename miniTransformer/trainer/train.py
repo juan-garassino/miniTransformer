@@ -27,7 +27,7 @@ def save_checkpoint(model, optimizer, epoch, filename):
 import sys
 
 
-def generate_text(model, int_to_char, device, max_new_tokens=2000):
+def generate_text(model, int_to_char, device, max_new_tokens=200):
     context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
     generated_tokens = model.generate_iter(context,
@@ -36,8 +36,11 @@ def generate_text(model, int_to_char, device, max_new_tokens=2000):
     for tokens in generated_tokens:
         for token in tokens:
             token = token.item()
-            char = int_to_char[token]
-            yield char
+            if token in int_to_char:
+                char = int_to_char[token]
+                yield char
+
+
 
 
 def train(
