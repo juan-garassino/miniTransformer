@@ -32,8 +32,8 @@ run_training:
 	python -m miniTransformer.main \
 	--batch_size 16 \
 	--block_size 32 \
-	--max_iters 15000 \
-	--eval_interval 1000 \
+	--max_iters 1000 \
+	--eval_interval 100 \
 	--learning_rate 1e-3 \
 	--device cpu \
 	--eval_iters 10 \
@@ -44,16 +44,16 @@ run_training:
 	--colab 0 \
 	--path /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/ \
 	--name input.txt \
-	--save_interval 1000 \
+	--save_interval 100 \
 	--checkpoint_dir /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints \
-	--heatmap_interval 1000
+	--heatmap_interval 100
 
 run_generation:
 	python -m miniTransformer.main \
 	--generate \
 	--colab 0 \
 	--checkpoint_dir /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/checkpoints \
-	--checkpoint checkpoint_499.pt \
+	--checkpoint checkpoint_999.pt \
 	--n_of_char 2000
 
 install:
