@@ -59,6 +59,7 @@ def train(
     path,
     name,
     save_interval,
+    plots_dir,
     checkpoint_dir,
     heatmap_interval,
 ):
@@ -192,7 +193,10 @@ def train(
             ]
             tensor_names = ["Keys", "Values", "Queries"]
 
-            visualize_attention(input_tensors, tensor_names, iter_num=iter)
+            visualize_attention(input_tensors,
+                                tensor_names,
+                                output_dir=plots_dir,
+                                iter_num=iter)
 
             print(
                 f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"

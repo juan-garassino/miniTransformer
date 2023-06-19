@@ -31,6 +31,9 @@ def parse_arguments():
     parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
     parser.add_argument("--checkpoint_dir", type=str, default="checkpoints")
+    parser.add_argument("--plots_dir",
+                        type=str,
+                        default="plots")
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument(
@@ -98,11 +101,29 @@ if __name__ == "__main__":
             print("Please provide a checkpoint file to generate text.")
     else:
         if args.colab == 0:
-            args.path= os.path.join(os.environ.get('HOME'), "Code", "juan-garassino", "miniTransformer", "miniTransformer", "data")
-            args.checkpoint= os.path.join(os.environ.get('HOME'), "Code", "juan-garassino", "miniTransformer", "miniTransformer", "checkpoints")
+            args.path = os.path.join(os.environ.get('HOME'), "Code",
+                                     "juan-garassino", "miniTransformer",
+                                     "miniTransformer", "data")
+
+            args.checkpoint = os.path.join(os.environ.get('HOME'), "Code",
+                                           "juan-garassino", "miniTransformer",
+                                           "miniTransformer", "checkpoints")
+
+            args.plots_dir = os.path.join(os.environ.get('HOME'), "Code",
+                                          "juan-garassino", "miniTransformer",
+                                          "miniTransformer", "heatmaps")
         else:
-            args.path= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "data")
-            args.checkpoint= os.path.join(os.environ.get('HOME'), "..", "content", "miniTransformer", "miniTransformer", "checkpoints")
+            args.path = os.path.join(os.environ.get('HOME'), "..", "content",
+                                     "miniTransformer", "miniTransformer",
+                                     "data")
+
+            args.checkpoint = os.path.join(os.environ.get('HOME'), "..",
+                                           "content", "miniTransformer",
+                                           "miniTransformer", "checkpoints")
+
+            args.plots_dir = os.path.join(os.environ.get('HOME'), "..",
+                                          "content", "miniTransformer",
+                                          "miniTransformer", "heatmaps")
         train(
             batch_size=args.batch_size,
             block_size=args.block_size,
@@ -118,7 +139,8 @@ if __name__ == "__main__":
             colab=args.colab,
             path=args.path,
             name=args.name,
-            heatmap_interval=args.heatmap_interval,  # Make sure this argument is included
+            heatmap_interval=args.
+            heatmap_interval,  # Make sure this argument is included
             save_interval=args.save_interval,  # Add this argument
             checkpoint_dir=args.checkpoint_dir,
-        )  # Add this argument
+            plots_dir=args.plots_dir)  # Add this argument

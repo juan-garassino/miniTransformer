@@ -63,13 +63,13 @@ run_colab_training:
 	--max_iters 1000 \
 	--eval_interval 100 \
 	--learning_rate 1e-3 \
-	--device cpu \
+	--device cuda \
 	--eval_iters 10 \
 	--n_embd 64 \
 	--n_head 4 \
 	--n_layer 4 \
 	--dropout 0.0 \
-	--colab 0 \
+	--colab 1 \
 	--path /Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/ \
 	--name input.txt \
 	--save_interval 100 \
