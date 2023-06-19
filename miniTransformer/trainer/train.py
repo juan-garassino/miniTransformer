@@ -173,8 +173,6 @@ def train(
             ]
             tensor_names = ["Keys", "Values", "Queries"]
 
-            print(plots_dir)
-
             visualize_attention(
                 input_tensors, tensor_names, output_dir=plots_dir, iter_num=iter
             )

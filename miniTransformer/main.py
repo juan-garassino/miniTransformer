@@ -116,38 +116,26 @@ if __name__ == "__main__":
                 os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
             )
 
-            print(args.data_dir)
-
             args.checkpoint_dir = os.path.join(
                 os.environ.get("HOME"), "Code", "juan-garassino", args.checkpoint_dir
             )
 
-            print(args.checkpoint_dir)
-
             args.plots_dir = os.path.join(
                 os.environ.get("HOME"), "Code", "juan-garassino", args.plots_dir
             )
-
-            print(args.plots_dir)
 
         else:
             args.data_dir = os.path.join(
                 os.environ.get("HOME"), "..", "content", args.data_dir
             )
 
-            print(args.data_dir)
-
             args.checkpoint_dir = os.path.join(
                 os.environ.get("HOME"), "..", "content", args.checkpoint_dir
             )
 
-            print(args.checkpoint_dir)
-
             args.plots_dir = os.path.join(
                 os.environ.get("HOME"), "..", "content", args.plots_dir
             )
-
-            print(args.plots_dir)
 
         train(
             batch_size=args.batch_size,
