@@ -6,6 +6,7 @@ import torch
 import sys
 import os
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
 
@@ -24,16 +25,20 @@ def parse_arguments():
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--colab", type=int, default=1)
     parser.add_argument(
-        "--path",
+        "--data_dir",
         type=str,
-        default="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data",
+        default="/miniTransformer/miniTransformer/data",
     )
     parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
-    parser.add_argument("--checkpoint_dir", type=str, default="checkpoints")
-    parser.add_argument("--plots_dir",
-                        type=str,
-                        default="plots")
+    parser.add_argument(
+        "--checkpoint_dir",
+        type=str,
+        default="/miniTransformer/miniTransformer/checkpoints",
+    )
+    parser.add_argument(
+        "--plots_dir", type=str, default="/miniTransformer/miniTransformer/plots"
+    )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument(
@@ -52,28 +57,36 @@ if __name__ == "__main__":
     args = parse_arguments()
     if args.generate:
         if args.colab == 0:
-            args.checkpoint_dir = os.path.join(os.environ.get('HOME'), "Code",
-                                               "juan-garassino",
-                                               "miniTransformer",
-                                               "miniTransformer",
-                                               "checkpoints")
-            checkpoint_dir = args.checkpoint_dir,
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"),
+                "Code",
+                "juan-garassino",
+                "miniTransformer",
+                "miniTransformer",
+                "checkpoints",
+            )
+            checkpoint_dir = (args.checkpoint_dir,)
         else:
-            args.checkpoint_dir = os.path.join(os.environ.get('HOME'), "..",
-                                               "content", "miniTransformer",
-                                               "miniTransformer",
-                                               "checkpoints")
-            checkpoint_dir = args.checkpoint_dir,
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"),
+                "..",
+                "content",
+                "miniTransformer",
+                "miniTransformer",
+                "checkpoints",
+            )
+            checkpoint_dir = (args.checkpoint_dir,)
         if args.checkpoint:
             device = torch.device(args.device)
             print(checkpoint_dir)
             print(args.checkpoint)
-            checkpoint = torch.load(os.path.join(checkpoint_dir[0], args.checkpoint),
-                                    map_location=device)
+            checkpoint = torch.load(
+                os.path.join(checkpoint_dir[0], args.checkpoint), map_location=device
+            )
             model_state_dict = checkpoint["model_state_dict"]
 
             char_to_int, int_to_char, vocab_size = create_char_mappings(
-                load_data(args.path, args.name)
+                load_data(args.data_dir, args.name)
             )
             model = BigramLanguageModel(
                 vocab_size,
@@ -89,41 +102,53 @@ if __name__ == "__main__":
 
             print("\n")
 
-            for char in generate_text(model,
-                                      int_to_char,
-                                      device,
-                                      max_new_tokens=args.n_of_char):
+            for char in generate_text(
+                model, int_to_char, device, max_new_tokens=args.n_of_char
+            ):
                 print(char, end="", flush=True)
                 sys.stdout.flush()
-
 
         else:
             print("Please provide a checkpoint file to generate text.")
     else:
         if args.colab == 0:
-            args.path = os.path.join(os.environ.get('HOME'), "Code",
-                                     "juan-garassino", "miniTransformer",
-                                     "miniTransformer", "data")
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
+            )
 
-            args.checkpoint = os.path.join(os.environ.get('HOME'), "Code",
-                                           "juan-garassino", "miniTransformer",
-                                           "miniTransformer", "checkpoints")
+            print(args.data_dir)
 
-            args.plots_dir = os.path.join(os.environ.get('HOME'), "Code",
-                                          "juan-garassino", "miniTransformer",
-                                          "miniTransformer", "heatmaps")
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.checkpoint_dir
+            )
+
+            print(args.checkpoint_dir)
+
+            args.plots_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.plots_dir
+            )
+
+            print(args.plots_dir)
+
         else:
-            args.path = os.path.join(os.environ.get('HOME'), "..", "content",
-                                     "miniTransformer", "miniTransformer",
-                                     "data")
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.data_dir
+            )
 
-            args.checkpoint = os.path.join(os.environ.get('HOME'), "..",
-                                           "content", "miniTransformer",
-                                           "miniTransformer", "checkpoints")
+            print(args.data_dir)
 
-            args.plots_dir = os.path.join(os.environ.get('HOME'), "..",
-                                          "content", "miniTransformer",
-                                          "miniTransformer", "heatmaps")
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.checkpoint_dir
+            )
+
+            print(args.checkpoint_dir)
+
+            args.plots_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.plots_dir
+            )
+
+            print(args.plots_dir)
+
         train(
             batch_size=args.batch_size,
             block_size=args.block_size,
@@ -137,10 +162,10 @@ if __name__ == "__main__":
             n_layer=args.n_layer,
             dropout=args.dropout,
             colab=args.colab,
-            path=args.path,
+            path=args.data_dir,
             name=args.name,
-            heatmap_interval=args.
-            heatmap_interval,  # Make sure this argument is included
-            save_interval=args.save_interval,  # Add this argument
+            heatmap_interval=args.heatmap_interval,
+            save_interval=args.save_interval,
             checkpoint_dir=args.checkpoint_dir,
-            plots_dir=args.plots_dir)  # Add this argument
+            plots_dir=args.plots_dir,
+        )

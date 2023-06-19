@@ -9,8 +9,9 @@ import os
 import glob
 
 
-def plot_heatmaps(axes, input_tensor_np, tensor_name, num_heatmaps, grid_size,
-                  font_size, cmap):
+def plot_heatmaps(
+    axes, input_tensor_np, tensor_name, num_heatmaps, grid_size, font_size, cmap
+):
     """
     Plot heatmaps for the input tensor in the specified axes.
 
@@ -94,8 +95,8 @@ def visualize_attention(
     input_tensors,
     tensor_names,
     iter_num=0,
-    output_dir="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/heatmaps",
-    animation_dir="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/animations",
+    output_dir="miniTransformer/miniTransformer/heatmaps",
+    animation_dir="miniTransformer/miniTransformer/animations",
     animation=True,
     heatmap_interval=1,
     resolution=250,
