@@ -82,7 +82,7 @@ def train(
     :param heatmap_interval: Interval to save attention heatmaps
     """
     print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
-    text = load_data(path, name)
+    text = load_data(path)#, name)
 
     print(f"\n🔀 {Fore.CYAN}Creating character mappings...{Style.RESET_ALL}")
     char_to_int, int_to_char, vocab_size = create_char_mappings(text)
