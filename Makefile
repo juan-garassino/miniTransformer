@@ -82,6 +82,7 @@ run_colab_generation:
 	python -m miniTransformer.main \
 	--generate \
 	--colab 0 \
+	--data_dir miniTransformer/miniTransformer/data \
 	--checkpoint_dir miniTransformer/miniTransformer/checkpoints \
 	--checkpoint checkpoint_999.pt \
 	--n_of_char 2000

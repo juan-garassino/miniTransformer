@@ -109,6 +109,8 @@ def train(
 
     print(f"\n✅ {Fore.CYAN}Starting the main training loop...{Style.RESET_ALL}")
 
+    print(sum(p.numel() for p in m.parameters()) / 1e6, 'M parameters')
+
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
             if not os.path.exists(checkpoint_dir):
@@ -165,12 +167,15 @@ def train(
 
         # Save attention heatmaps periodically
         if iter % heatmap_interval == 0 or iter == max_iters - 1:
+
             print(f"\n✅ {Fore.CYAN}Saving attention heatmaps...{Style.RESET_ALL}")
+
             input_tensors = [
                 [head.key.weight for head in model.attention_heads],
                 [head.value.weight for head in model.attention_heads],
                 [head.query.weight for head in model.attention_heads],
             ]
+
             tensor_names = ["Keys", "Values", "Queries"]
 
             visualize_attention(
@@ -181,8 +186,6 @@ def train(
                 f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
             )
 
-
-# "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/"
 if __name__ == "__main__":
     # Set default hyperparameters and constants
     # Call the train function with the default values
