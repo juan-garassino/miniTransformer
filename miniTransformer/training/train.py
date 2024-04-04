@@ -107,9 +107,9 @@ def train(
     print(f"\n✅ {Fore.CYAN}Creating a PyTorch optimizer...{Style.RESET_ALL}")
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
-    print(f"\n✅ {Fore.CYAN}Starting the main training loop...{Style.RESET_ALL}")
+    total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
-    print(sum(p.numel() for p in m.parameters()) / 1e6, "M parameters")
+    print(f"\n✅ {Fore.CYAN}The total number of parameters is {total_params} million{Style.RESET_ALL}")
 
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
