@@ -2,15 +2,10 @@
 .coverage
 .ipynb_checkpoints
 .DS_Store
-raw_data/
 *.csv
 **/__pycache__/
 .env
 
-miniTransformer/animations
-miniTransformer/checkpoints
-miniTransformer/heatmaps
-
-animations
-checkpoints
-heatmaps
+raw_data/
+results/
+data/
