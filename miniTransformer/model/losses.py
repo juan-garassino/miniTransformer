@@ -1,5 +1,5 @@
 import torch
-from miniTransformer.sourcing.sourcing import create_data_batch
+from miniTransformer.preprocessing.sourcing.sourcing import create_data_batch
 
 
 @torch.no_grad()

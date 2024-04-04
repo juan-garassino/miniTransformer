@@ -1,7 +1,7 @@
 import os
 import torch
 from colorama import Fore, Style
-from miniTransformer.sourcing.sourcing import (
+from miniTransformer.preprocessing.sourcing.sourcing import (
     load_data,
     create_char_mappings,
     create_encoder_decoder,
@@ -82,7 +82,7 @@ def train(
     :param heatmap_interval: Interval to save attention heatmaps
     """
     print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
-    text = load_data(path)#, name)
+    text = load_data(path)  # , name)
 
     print(f"\n🔀 {Fore.CYAN}Creating character mappings...{Style.RESET_ALL}")
     char_to_int, int_to_char, vocab_size = create_char_mappings(text)
@@ -109,7 +109,7 @@ def train(
 
     print(f"\n✅ {Fore.CYAN}Starting the main training loop...{Style.RESET_ALL}")
 
-    print(sum(p.numel() for p in m.parameters()) / 1e6, 'M parameters')
+    print(sum(p.numel() for p in m.parameters()) / 1e6, "M parameters")
 
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
@@ -185,6 +185,7 @@ def train(
             print(
                 f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
             )
+
 
 if __name__ == "__main__":
     # Set default hyperparameters and constants

@@ -23,8 +23,7 @@ def load_data(path):
         # Check if the file is a text file
         if file_name.endswith(".txt"):
             # Read the text file and append its content to the text string
-            with open(os.path.join(path, file_name), "r",
-                      encoding="utf-8") as file:
+            with open(os.path.join(path, file_name), "r", encoding="utf-8") as file:
                 text += file.read()
 
     print(f"\n✅ Length of dataset in characters: {len(text)}")
