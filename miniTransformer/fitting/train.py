@@ -7,8 +7,8 @@ from miniTransformer.preprocessing.sourcing.sourcing import (
     create_encoder_decoder,
     create_train_val_splits,
 )
-from miniTransformer.model.bigram import BigramLanguageModel
-from miniTransformer.model.losses import estimate_loss, create_data_batch
+from miniTransformer.architecture.bigram import BigramLanguageModel
+from miniTransformer.architecture.losses import estimate_loss, create_data_batch
 from miniTransformer.visuzalization.visualize_attention import visualize_attention, create_animation
 import sys
 
