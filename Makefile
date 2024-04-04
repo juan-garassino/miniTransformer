@@ -42,11 +42,11 @@ run_training:
 	--colab 0 \
 	--data_dir miniTransformer/data \
 	--name input.txt \
-	--checkpoint_dir miniTransformer/results/checkpoints \
+	--checkpoints_dir miniTransformer/results/checkpoints \
 	--save_interval 100 \
-	--plots_dir miniTransformer/results/heatmaps \
+	--heatmaps_dir miniTransformer/results/heatmaps \
 	--heatmap_interval 500 \
-	--animation_dir miniTransformer/results/animations
+	--animations_dir miniTransformer/results/animations
 
 run_generation:
 	python -m miniTransformer.main \

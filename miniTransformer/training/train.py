@@ -56,9 +56,9 @@ def train(
     path,
     name,
     save_interval,
-    plots_dir,
-    animation_dir,
-    checkpoint_dir,
+    heatmaps_dir,
+    animations_dir,
+    checkpoints_dir,
     heatmap_interval,
 ):
     """
@@ -79,7 +79,7 @@ def train(
     :param path: Path to the text file
     :param name: Name of the dataset
     :param save_interval: Interval to save the model checkpoints
-    :param checkpoint_dir: Directory to save the model checkpoints
+    :param checkpoints_dir: Directory to save the model checkpoints
     :param heatmap_interval: Interval to save attention heatmaps
     """
     print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
@@ -114,8 +114,8 @@ def train(
 
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
-            if not os.path.exists(checkpoint_dir):
-                os.makedirs(checkpoint_dir)
+            if not os.path.exists(checkpoints_dir):
+                os.makedirs(checkpoints_dir)
 
             print(f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}")
 
@@ -123,7 +123,7 @@ def train(
                 model,
                 optimizer,
                 iter,
-                os.path.join(checkpoint_dir, f"checkpoint_{iter}.pt"),
+                os.path.join(checkpoints_dir, f"checkpoint_{iter}.pt"),
             )
 
             # HERE WAS THE EVALUATION INDENTED INSIDE HERE
@@ -185,7 +185,7 @@ def train(
             tensor_names = ["Keys", "Values", "Queries"]
 
             visualize_attention(
-                input_tensors, tensor_names, output_dir=plots_dir, animation_dir=animation_dir, iter_num=iter, animation=True
+                input_tensors, tensor_names, output_dir=heatmaps_dir, animation_dir=animations_dir, iter_num=iter, animation=True
             )
 
             print(
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         ),
         name="input.txt",
         save_interval=100,
-        checkpoint_dir=os.path.join(
+        checkpoints_dir=os.path.join(
             os.environ.get("HOME"),
             "Users",
             "juan-garassino",

@@ -40,15 +40,15 @@ def parse_arguments():
     parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
     parser.add_argument(
-        "--checkpoint_dir",
+        "--checkpoints_dir",
         type=str,
         default="/miniTransformer/results/checkpoints",
     )
     parser.add_argument(
-        "--plots_dir", type=str, default="/miniTransformer/results/heatmaps"
+        "--heatmaps_dir", type=str, default="/miniTransformer/results/heatmaps"
     )
     parser.add_argument(
-        "--animation_dir", type=str, default="/miniTransformer/results/animation"
+        "--animations_dir", type=str, default="/miniTransformer/results/animations"
     )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
@@ -65,8 +65,11 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
+
     args = parse_arguments()
+
     if args.generate:
+
         if args.colab == 0:
             # Assuming args.data_dir has been set up with another parser.add_argument call
             args.data_dir = os.path.join(
@@ -82,8 +85,11 @@ if __name__ == "__main__":
         if args.checkpoint:
 
             device = torch.device(args.device)
+
             print(checkpoint_dir)
+
             print(args.checkpoint)
+
             checkpoint = torch.load(
                 os.path.join(checkpoint_dir[0], args.checkpoint), map_location=device
             )
@@ -124,12 +130,16 @@ if __name__ == "__main__":
             os.environ.get("HOME"), args.root_dir, args.data_dir
         )
 
-        args.checkpoint_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.checkpoint_dir
+        args.checkpoints_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.checkpoints_dir
         )
 
-        args.plots_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.plots_dir
+        args.heatmaps_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.heatmaps_dir
+        )
+
+        args.animations_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.animations_dir
         )
 
         train(
@@ -149,7 +159,7 @@ if __name__ == "__main__":
             name=args.name,
             heatmap_interval=args.heatmap_interval,
             save_interval=args.save_interval,
-            checkpoint_dir=args.checkpoint_dir,
-            plots_dir=args.plots_dir,
-            animation_dir=args.animation_dir
+            checkpoints_dir=args.checkpoints_dir,
+            heatmaps_dir=args.heatmaps_dir,
+            animations_dir=args.animations_dir
         )
