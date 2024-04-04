@@ -1,6 +1,9 @@
 import argparse
-from miniTransformer.trainer.train import train, generate_text, BigramLanguageModel
-from miniTransformer.preprocessing.sourcing.sourcing import load_data, create_char_mappings
+from miniTransformer.training.train import train, generate_text, BigramLanguageModel
+from miniTransformer.preprocessing.sourcing.sourcing import (
+    load_data,
+    create_char_mappings,
+)
 from miniTransformer.visuzalization.visualize_attention import create_animation
 import torch
 import sys
@@ -8,17 +11,16 @@ import os
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(
-        description="Train a miniTransformer model.")
+    parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
 
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--block_size", type=int, default=32)
     parser.add_argument("--max_iters", type=int, default=500)
     parser.add_argument("--eval_interval", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=1e-3)
-    parser.add_argument("--device",
-                        type=str,
-                        default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument(
+        "--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
     parser.add_argument("--eval_iters", type=int, default=200)
     parser.add_argument("--n_embd", type=int, default=64)
     parser.add_argument("--n_head", type=int, default=4)
@@ -37,9 +39,9 @@ def parse_arguments():
         type=str,
         default="/miniTransformer/miniTransformer/checkpoints",
     )
-    parser.add_argument("--plots_dir",
-                        type=str,
-                        default="/miniTransformer/miniTransformer/plots")
+    parser.add_argument(
+        "--plots_dir", type=str, default="/miniTransformer/miniTransformer/plots"
+    )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument(
@@ -59,8 +61,9 @@ if __name__ == "__main__":
     if args.generate:
         if args.colab == 0:
 
-            args.data_dir = os.path.join(os.environ.get("HOME"), "Code",
-                                         "juan-garassino", args.data_dir)
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
+            )
 
             args.checkpoint_dir = os.path.join(
                 os.environ.get("HOME"),
@@ -70,12 +73,13 @@ if __name__ == "__main__":
                 "miniTransformer",
                 "checkpoints",
             )
-            checkpoint_dir = (args.checkpoint_dir, )
+            checkpoint_dir = (args.checkpoint_dir,)
 
         else:
 
-            args.data_dir = os.path.join(os.environ.get("HOME"), "..",
-                                         "content", args.data_dir)
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.data_dir
+            )
 
             args.checkpoint_dir = os.path.join(
                 os.environ.get("HOME"),
@@ -85,18 +89,18 @@ if __name__ == "__main__":
                 "miniTransformer",
                 "checkpoints",
             )
-            checkpoint_dir = (args.checkpoint_dir, )
+            checkpoint_dir = (args.checkpoint_dir,)
         if args.checkpoint:
             device = torch.device(args.device)
             print(checkpoint_dir)
             print(args.checkpoint)
-            checkpoint = torch.load(os.path.join(checkpoint_dir[0],
-                                                 args.checkpoint),
-                                    map_location=device)
+            checkpoint = torch.load(
+                os.path.join(checkpoint_dir[0], args.checkpoint), map_location=device
+            )
             model_state_dict = checkpoint["model_state_dict"]
 
             char_to_int, int_to_char, vocab_size = create_char_mappings(
-                load_data(args.data_dir)  #, args.name)
+                load_data(args.data_dir)  # , args.name)
             )
             model = BigramLanguageModel(
                 vocab_size,
@@ -112,10 +116,9 @@ if __name__ == "__main__":
 
             print("\n")
 
-            for char in generate_text(model,
-                                      int_to_char,
-                                      device,
-                                      max_new_tokens=args.n_of_char):
+            for char in generate_text(
+                model, int_to_char, device, max_new_tokens=args.n_of_char
+            ):
                 print(char, end="", flush=True)
                 sys.stdout.flush()
 
@@ -124,26 +127,31 @@ if __name__ == "__main__":
     else:
         if args.colab == 0:
 
-            args.data_dir = os.path.join(os.environ.get("HOME"), "Code",
-                                         "juan-garassino", args.data_dir)
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
+            )
 
-            args.checkpoint_dir = os.path.join(os.environ.get("HOME"), "Code",
-                                               "juan-garassino",
-                                               args.checkpoint_dir)
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.checkpoint_dir
+            )
 
-            args.plots_dir = os.path.join(os.environ.get("HOME"), "Code",
-                                          "juan-garassino", args.plots_dir)
+            args.plots_dir = os.path.join(
+                os.environ.get("HOME"), "Code", "juan-garassino", args.plots_dir
+            )
 
         else:
 
-            args.data_dir = os.path.join(os.environ.get("HOME"), "..",
-                                         "content", args.data_dir)
+            args.data_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.data_dir
+            )
 
-            args.checkpoint_dir = os.path.join(os.environ.get("HOME"), "..",
-                                               "content", args.checkpoint_dir)
+            args.checkpoint_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.checkpoint_dir
+            )
 
-            args.plots_dir = os.path.join(os.environ.get("HOME"), "..",
-                                          "content", args.plots_dir)
+            args.plots_dir = os.path.join(
+                os.environ.get("HOME"), "..", "content", args.plots_dir
+            )
 
         train(
             batch_size=args.batch_size,

@@ -2,7 +2,7 @@ from tokenizers import Tokenizer, models, pre_tokenizers, trainers
 
 
 def load_text_file(filepath):
-    with open(filepath, 'r') as file:
+    with open(filepath, "r") as file:
         text = file.read()
     return text
 
@@ -58,9 +58,7 @@ class MyTokenizer:
         vocab = self.tokenizer.get_vocab()
 
         # Extract subwords from the vocabulary
-        subwords = [
-            subword for subword in vocab if not subword.startswith(" ")
-        ]
+        subwords = [subword for subword in vocab if not subword.startswith(" ")]
 
         # Create mappings between subwords and integers
         subword_to_int = {subword: i for i, subword in enumerate(subwords)}
@@ -69,9 +67,9 @@ class MyTokenizer:
         return subword_to_int, int_to_subword, len(subwords)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     text = load_text_file(
-        '/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/input.txt'
+        "/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/data/input.txt"
     )
 
     num_merges = 500
@@ -80,17 +78,17 @@ if __name__ == '__main__':
     tokenized_text = tokenizer.train(text)
 
     # Save the tokenizer
-    tokenizer.save_tokenizer('tokenizer.json')
+    tokenizer.save_tokenizer("tokenizer.json")
 
     # Load the tokenizer
-    tokenizer.load_tokenizer('tokenizer.json')
+    tokenizer.load_tokenizer("tokenizer.json")
 
     # Tokenize text with the loaded tokenizer
     loaded_tokenized_text = tokenizer.tokenize_text_with_loaded_tokenizer(text)
 
     tokenizer.summary()
 
-    text = '''
+    text = """
     Not all the water in the rough rude sea
     Can wash the balm off from an anointed king;
     The breath of worldly men cannot depose
@@ -101,11 +99,11 @@ if __name__ == '__main__':
     A glorious angel: then, if angels fight,
     Weak men must fall, for heaven still guards the right.
     Welcome, my lord: how far off lies your power?
-    '''
+    """
 
     tokenizer = MyTokenizer(num_merges=0)
 
-    tokenizer.load_tokenizer('tokenizer.json')
+    tokenizer.load_tokenizer("tokenizer.json")
 
     tokenized_text = tokenizer.tokenize_text_with_loaded_tokenizer(text)
 
