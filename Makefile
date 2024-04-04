@@ -27,6 +27,7 @@ clean:
 
 run_training:
 	python -m miniTransformer.main \
+	--root_dir Code/juan-garassino/miniNetworks/ \
 	--batch_size 16 \
 	--block_size 32 \
 	--max_iters 1000 \
@@ -39,11 +40,11 @@ run_training:
 	--n_layer 4 \
 	--dropout 0.0 \
 	--colab 0 \
-	--data_dir miniTransformer/miniTransformer/data \
+	--data_dir miniTransformer/data \
 	--name input.txt \
-	--checkpoint_dir miniTransformer/miniTransformer/checkpoints \
+	--checkpoint_dir miniTransformer/results/checkpoints \
 	--save_interval 100 \
-	--plots_dir miniTransformer/miniTransformer/heatmaps \
+	--plots_dir miniTransformer/results/heatmaps \
 	--heatmap_interval 100
 
 run_generation:
