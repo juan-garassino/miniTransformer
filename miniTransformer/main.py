@@ -13,6 +13,11 @@ import os
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
 
+    parser.add_argument(
+        "--root_dir",
+        type=str,
+        default="Code/juan-garassino",  # Specify the path as a single string
+    )
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--block_size", type=int, default=32)
     parser.add_argument("--max_iters", type=int, default=500)
@@ -60,48 +65,32 @@ if __name__ == "__main__":
     args = parse_arguments()
     if args.generate:
         if args.colab == 0:
-
+            # Assuming args.data_dir has been set up with another parser.add_argument call
             args.data_dir = os.path.join(
-                os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
+                os.environ.get("HOME"), args.root_dir, args.data_dir
             )
 
             args.checkpoint_dir = os.path.join(
-                os.environ.get("HOME"),
-                "Code",
-                "juan-garassino",
-                "miniTransformer",
-                "miniTransformer",
-                "checkpoints",
+                os.environ.get("HOME"), args.root_dir, args.checkpoint_dir
             )
+            
             checkpoint_dir = (args.checkpoint_dir,)
 
-        else:
-
-            args.data_dir = os.path.join(
-                os.environ.get("HOME"), "..", "content", args.data_dir
-            )
-
-            args.checkpoint_dir = os.path.join(
-                os.environ.get("HOME"),
-                "..",
-                "content",
-                "miniTransformer",
-                "miniTransformer",
-                "checkpoints",
-            )
-            checkpoint_dir = (args.checkpoint_dir,)
         if args.checkpoint:
+
             device = torch.device(args.device)
             print(checkpoint_dir)
             print(args.checkpoint)
             checkpoint = torch.load(
                 os.path.join(checkpoint_dir[0], args.checkpoint), map_location=device
             )
+            
             model_state_dict = checkpoint["model_state_dict"]
 
             char_to_int, int_to_char, vocab_size = create_char_mappings(
                 load_data(args.data_dir)  # , args.name)
             )
+            
             model = BigramLanguageModel(
                 vocab_size,
                 args.n_embd,
@@ -110,6 +99,7 @@ if __name__ == "__main__":
                 args.n_layer,
                 device,
             ).to(device)
+            
             model.load_state_dict(model_state_dict)
 
             model.eval()
@@ -124,34 +114,20 @@ if __name__ == "__main__":
 
         else:
             print("Please provide a checkpoint file to generate text.")
+    
     else:
-        if args.colab == 0:
 
-            args.data_dir = os.path.join(
-                os.environ.get("HOME"), "Code", "juan-garassino", args.data_dir
-            )
+        args.data_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.data_dir
+        )
 
-            args.checkpoint_dir = os.path.join(
-                os.environ.get("HOME"), "Code", "juan-garassino", args.checkpoint_dir
-            )
+        args.checkpoint_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.checkpoint_dir
+        )
 
-            args.plots_dir = os.path.join(
-                os.environ.get("HOME"), "Code", "juan-garassino", args.plots_dir
-            )
-
-        else:
-
-            args.data_dir = os.path.join(
-                os.environ.get("HOME"), "..", "content", args.data_dir
-            )
-
-            args.checkpoint_dir = os.path.join(
-                os.environ.get("HOME"), "..", "content", args.checkpoint_dir
-            )
-
-            args.plots_dir = os.path.join(
-                os.environ.get("HOME"), "..", "content", args.plots_dir
-            )
+        args.plots_dir = os.path.join(
+            os.environ.get("HOME"), args.root_dir, args.plots_dir
+        )
 
         train(
             batch_size=args.batch_size,
