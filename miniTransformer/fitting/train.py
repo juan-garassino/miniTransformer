@@ -119,7 +119,29 @@ def train(
     )
 
     for iter in range(max_iters):
+        # Sample a batch of data
+        print(f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
+        
+        xb, yb = create_data_batch(
+            train_data,
+            val_data,
+            "train",
+            block_size=block_size,
+            batch_size=batch_size,
+            device=device,
+        )
+        
+        # Evaluate the loss and update the model
+        print(f"\n✅ {Fore.CYAN}Updating the model parameters...{Style.RESET_ALL}")
+
+        logits, loss = model(xb, yb)
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+
+        # Save model periodically
         if iter % save_interval == 0 or iter == max_iters - 1:
+            
             if not os.path.exists(checkpoints_dir):
                 os.makedirs(checkpoints_dir)
 
@@ -132,28 +154,7 @@ def train(
                 os.path.join(checkpoints_dir, f"checkpoint_{iter}.pt"),
             )
 
-            # HERE WAS THE EVALUATION INDENTED INSIDE HERE
-
-            # Sample a batch of data
-            print(f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
-
-            xb, yb = create_data_batch(
-                train_data,
-                val_data,
-                "train",
-                block_size=block_size,
-                batch_size=batch_size,
-                device=device,
-            )
-
-            # Evaluate the loss and update the model
-            print(f"\n✅ {Fore.CYAN}Updating the model parameters...{Style.RESET_ALL}")
-
-            logits, loss = model(xb, yb)
-            optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            optimizer.step()
-
+        # Evaluation periodically
         if iter % eval_interval == 0 or iter == max_iters - 1:
             print(f"\n✅ {Fore.CYAN}Evaluating model loss...{Style.RESET_ALL}")
 
@@ -169,8 +170,6 @@ def train(
             print(
                 f"\n✅ {Fore.MAGENTA}step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}"
             )
-
-        # THIS WAS ALSO INDENTED INSIDE
 
         # Save attention heatmaps periodically
         if iter % heatmap_interval == 0 or iter == max_iters - 1:
@@ -256,6 +255,7 @@ def train(
                 f"\n✅ {Fore.YELLOW}Saved attention heatmaps at step {iter}{Style.RESET_ALL}"
             )
 
+        # Save final animation
         if iter == max_iters - 1:
             tensor_names = ["K", "V", "Q"]
             # Call the function to create animations for all tensor types

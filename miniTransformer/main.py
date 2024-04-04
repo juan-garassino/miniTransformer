@@ -15,7 +15,6 @@ from miniTransformer.preprocessing.sourcing.sourcing import (
 
 # Assuming create_animation is used elsewhere or will be used in future updates.
 
-
 def parse_arguments():
     """Parse command line arguments for the miniTransformer script."""
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
