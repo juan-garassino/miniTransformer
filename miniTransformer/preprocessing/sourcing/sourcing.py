@@ -1,7 +1,6 @@
 import torch
 import os
 
-
 def load_data(path):
     """
     Load the text data from all text files in a folder and return their concatenated content.
