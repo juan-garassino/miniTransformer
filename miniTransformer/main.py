@@ -35,17 +35,20 @@ def parse_arguments():
     parser.add_argument(
         "--data_dir",
         type=str,
-        default="/miniTransformer/miniTransformer/data",
+        default="/miniTransformer/data",
     )
     parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
     parser.add_argument(
         "--checkpoint_dir",
         type=str,
-        default="/miniTransformer/miniTransformer/checkpoints",
+        default="/miniTransformer/results/checkpoints",
     )
     parser.add_argument(
-        "--plots_dir", type=str, default="/miniTransformer/miniTransformer/plots"
+        "--plots_dir", type=str, default="/miniTransformer/results/heatmaps"
+    )
+    parser.add_argument(
+        "--animation_dir", type=str, default="/miniTransformer/results/animation"
     )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
@@ -148,4 +151,5 @@ if __name__ == "__main__":
             save_interval=args.save_interval,
             checkpoint_dir=args.checkpoint_dir,
             plots_dir=args.plots_dir,
+            animation_dir=args.animation_dir
         )

@@ -39,7 +39,6 @@ def plot_heatmaps(
         ax.set_xlabel("Input Sequence Position", fontsize=font_size)
         ax.set_ylabel("Attention Distribution", fontsize=font_size)
 
-
 def save_plot(output_dir, tensor_name, iter_num):
     """
     Save the current plot to the specified output directory.
@@ -54,7 +53,6 @@ def save_plot(output_dir, tensor_name, iter_num):
     plt.clf()
 
     print(f"\n✅ {Fore.GREEN}Plot saved to {output_path}{Style.RESET_ALL}")
-
 
 def create_animation(
     tensor_names,
@@ -90,14 +88,13 @@ def create_animation(
 
         print(f"\n🎦 {Fore.BLUE}Animation saved to {output_path}{Style.RESET_ALL}")
 
-
 def visualize_attention(
     input_tensors,
     tensor_names,
     iter_num=0,
     output_dir="miniTransformer/miniTransformer/heatmaps",
     animation_dir="miniTransformer/miniTransformer/animations",
-    animation=True,
+    animation=False,
     heatmap_interval=1,
     resolution=250,
     font_size=5,
@@ -125,6 +122,7 @@ def visualize_attention(
         num_heatmaps = input_tensor_np.shape[1]
 
         grid_size = int(math.ceil(math.sqrt(num_heatmaps)))
+
         fig, axes = plt.subplots(
             grid_size, grid_size, figsize=(2 * grid_size, 6), dpi=resolution
         )
@@ -143,6 +141,6 @@ def visualize_attention(
         create_animation(
             tensor_names,
             # heatmap_interval,
-            output_dir="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/heatmaps",
-            animation_dir="/Users/juan-garassino/Code/juan-garassino/miniTransformer/miniTransformer/animations",
+            output_dir=output_dir,
+            animation_dir=animation_dir,
         )

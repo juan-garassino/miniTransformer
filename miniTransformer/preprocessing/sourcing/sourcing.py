@@ -1,6 +1,6 @@
 import torch
 import os
-
+from colorama import Fore, Style
 
 def load_data(path):
     """
@@ -26,7 +26,7 @@ def load_data(path):
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file:
                 text += file.read()
 
-    print(f"\n✅ Length of dataset in characters: {len(text)}")
+    print(f"\n✅ {Fore.MAGENTA}Length of dataset in characters: {len(text)}{Style.RESET_ALL}")
 
     return text
 

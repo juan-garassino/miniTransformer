@@ -57,6 +57,7 @@ def train(
     name,
     save_interval,
     plots_dir,
+    animation_dir,
     checkpoint_dir,
     heatmap_interval,
 ):
@@ -109,7 +110,7 @@ def train(
 
     total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
-    print(f"\n✅ {Fore.CYAN}The total number of parameters is {total_params} million{Style.RESET_ALL}")
+    print(f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}")
 
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
@@ -170,16 +171,21 @@ def train(
 
             print(f"\n✅ {Fore.CYAN}Saving attention heatmaps...{Style.RESET_ALL}")
 
+            #print(model.attention_heads.keys())
+
             input_tensors = [
                 [head.key.weight for head in model.attention_heads],
                 [head.value.weight for head in model.attention_heads],
                 [head.query.weight for head in model.attention_heads],
             ]
 
+            for i, head in enumerate(model.attention_heads):
+                print(f"\n🤯  {Fore.MAGENTA}Head {i + 1}: Key Shape: {head.key.weight.shape}, Query Shape: {head.query.weight.shape}, Value Shape: {head.value.weight.shape}{Style.RESET_ALL}")
+
             tensor_names = ["Keys", "Values", "Queries"]
 
             visualize_attention(
-                input_tensors, tensor_names, output_dir=plots_dir, iter_num=iter
+                input_tensors, tensor_names, output_dir=plots_dir, animation_dir=animation_dir, iter_num=iter, animation=True
             )
 
             print(
