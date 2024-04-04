@@ -112,9 +112,45 @@ class BigramLanguageModel(nn.Module):
     @property
     def attention_heads(self):
         """
-        A property that returns the attention heads from the first Transformer block.
+        A property that returns the matrices for Queries (Q), Values (V), and Keys (K) 
+        from all attention heads across all Transformer blocks. The structure is organized 
+        by block, then head, with each head containing a list [Q, V, K] matrices.
 
         Returns:
-            attention_heads (list): A list of attention heads from the first Transformer block.
+            all_attention_heads (list of list of lists): A nested list structure where 
+            the first dimension is the block, the second is the head within that block, 
+            and the third contains the Q, V, K matrices in order.
         """
-        return self.blocks[0].sa.heads
+        # Initialize an empty list to hold the structured attention heads data
+        all_attention_heads = []
+
+        # Iterate over each block in the model
+        for block in self.blocks:
+            # Initialize a list for the current block's heads
+            block_heads = []
+            
+            # Iterate over each head in the current block
+            for head in block.sa.heads:
+                # Add the head's Q, V, K matrices to a list in specific order
+                head_matrices = [
+                    head.query.weight.data,  # Assuming .weight.data gives the actual matrix for Q
+                    head.value.weight.data,  # For V
+                    head.key.weight.data     # For K
+                ]
+                # Append the head's matrices list to the current block's list of heads
+                block_heads.append(head_matrices)
+            
+            # Append the current block's list of heads (with their matrices) to the all_attention_heads list
+            all_attention_heads.append(block_heads)
+
+        return all_attention_heads
+
+    # @property
+    # def attention_heads(self):
+    #     """
+    #     A property that returns the attention heads from the first Transformer block.
+
+    #     Returns:
+    #         attention_heads (list): A list of attention heads from the first Transformer block.
+    #     """
+    #     return self.blocks[0].sa.heads
