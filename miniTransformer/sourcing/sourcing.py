@@ -1,19 +1,31 @@
 import torch
+import os
 
 
-def load_data(path, name):
+def load_data(path):
     """
-    Load the text data from a file and return its content.
+    Load the text data from all text files in a folder and return their concatenated content.
 
     Args:
-        path (str): The path to the directory containing the text file.
+        path (str): The path to the directory containing the text files.
 
     Returns:
-        text (str): The content of the text file.
+        text (str): The concatenated content of all text files in the folder.
     """
-    # Read the text file and store its content in a variable
-    with open(f"{path}/{name}", "r", encoding="utf-8") as f:
-        text = f.read()
+    # Get a list of all the files in the directory
+    files = os.listdir(path)
+
+    # Initialize an empty string to store the concatenated content
+    text = ""
+
+    # Iterate over each file in the directory
+    for file_name in files:
+        # Check if the file is a text file
+        if file_name.endswith(".txt"):
+            # Read the text file and append its content to the text string
+            with open(os.path.join(path, file_name), "r",
+                      encoding="utf-8") as file:
+                text += file.read()
 
     print(f"\n✅ Length of dataset in characters: {len(text)}")
 
