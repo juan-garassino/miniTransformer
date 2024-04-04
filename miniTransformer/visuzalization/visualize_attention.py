@@ -6,6 +6,7 @@ import numpy as np
 import os
 import glob
 
+
 def save_plot(output_dir, tensor_name, iter_num):
     """
     Save the current plot to the specified output directory.
@@ -20,6 +21,7 @@ def save_plot(output_dir, tensor_name, iter_num):
     plt.clf()
 
     print(f"\n✅ {Fore.GREEN}Plot saved to {output_path}{Style.RESET_ALL}")
+
 
 def create_animation(tensor_names, output_dir="heatmaps", animation_dir="animations"):
     """
@@ -40,7 +42,9 @@ def create_animation(tensor_names, output_dir="heatmaps", animation_dir="animati
         file_pattern = os.path.join(output_dir, f"{tensor_name}_iter_*.png")
         file_list = glob.glob(file_pattern)
         # Ensure the files are sorted by iteration number
-        file_list.sort(key=lambda x: int(os.path.basename(x).split('_iter_')[-1].split('.')[0]))
+        file_list.sort(
+            key=lambda x: int(os.path.basename(x).split("_iter_")[-1].split(".")[0])
+        )
 
         for file_path in file_list:
             images.append(imageio.imread(file_path))
@@ -50,6 +54,7 @@ def create_animation(tensor_names, output_dir="heatmaps", animation_dir="animati
         imageio.mimsave(output_path, images, duration=0.2)
 
         print(f"\n🎦 {Fore.BLUE}Animation saved to {output_path}{Style.RESET_ALL}")
+
 
 def plot_heatmaps(axes, input_tensor_np, tensor_name, grid_size, font_size, cmap):
     """
@@ -67,24 +72,39 @@ def plot_heatmaps(axes, input_tensor_np, tensor_name, grid_size, font_size, cmap
         for head in range(num_heads):
             ax = axes[layer, head]
             sns.heatmap(
-                input_tensor_np[layer, head, :, :],  # Adjust indexing for the new tensor shape
+                input_tensor_np[
+                    layer, head, :, :
+                ],  # Adjust indexing for the new tensor shape
                 annot=False,
                 ax=ax,
                 cbar=False,
                 cmap=cmap,
             )
-            ax.set_title(f"{tensor_name} Layer {layer + 1} Head {head + 1}", fontsize=font_size)
-            
+            ax.set_title(
+                f"{tensor_name} Layer {layer + 1} Head {head + 1}", fontsize=font_size
+            )
+
             # Remove tick marks and labels
             ax.set_xticks([])
             ax.set_yticks([])
             # Also remove axis labels
-            ax.set_xlabel('')
-            ax.set_ylabel('')
+            ax.set_xlabel("")
+            ax.set_ylabel("")
 
-def visualize_attention(input_tensors, tensor_names, iter_num=0, output_dir="heatmaps",
-                        animation_dir="animations", animation=False, heatmap_interval=1,
-                        resolution=250, font_size=5, cmap="viridis", grid_size=None):
+
+def visualize_attention(
+    input_tensors,
+    tensor_names,
+    iter_num=0,
+    output_dir="heatmaps",
+    animation_dir="animations",
+    animation=False,
+    heatmap_interval=1,
+    resolution=250,
+    font_size=5,
+    cmap="viridis",
+    grid_size=None,
+):
     """
     Visualize attention heatmaps for the input tensors.
 
@@ -106,7 +126,9 @@ def visualize_attention(input_tensors, tensor_names, iter_num=0, output_dir="hea
     for input_tensor, tensor_name in zip(input_tensors, tensor_names):
         input_tensor_np = np.array(input_tensor.detach().cpu().numpy())
 
-        fig, axes = plt.subplots(*grid_size, figsize=(2 * grid_size[1], 2 * grid_size[0]), dpi=resolution)
+        fig, axes = plt.subplots(
+            *grid_size, figsize=(2 * grid_size[1], 2 * grid_size[0]), dpi=resolution
+        )
 
         plot_heatmaps(axes, input_tensor_np, tensor_name, grid_size, font_size, cmap)
 
@@ -115,4 +137,3 @@ def visualize_attention(input_tensors, tensor_names, iter_num=0, output_dir="hea
         plt.close(fig)
 
         print(f"\n🆕 Created heatmaps for {tensor_name} at {fig_path}")
-

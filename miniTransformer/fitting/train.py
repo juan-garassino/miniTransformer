@@ -9,7 +9,10 @@ from miniTransformer.preprocessing.sourcing.sourcing import (
 )
 from miniTransformer.architecture.bigram import BigramLanguageModel
 from miniTransformer.architecture.losses import estimate_loss, create_data_batch
-from miniTransformer.visuzalization.visualize_attention import visualize_attention, create_animation
+from miniTransformer.visuzalization.visualize_attention import (
+    visualize_attention,
+    create_animation,
+)
 import sys
 
 
@@ -100,7 +103,7 @@ def train(
     train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
 
     print(f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}")
-    
+
     model = BigramLanguageModel(vocab_size, n_embd, block_size, n_head, n_layer, device)
 
     m = model.to(device)
@@ -111,7 +114,9 @@ def train(
 
     total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
-    print(f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}")
+    print(
+        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}"
+    )
 
     for iter in range(max_iters):
         if iter % save_interval == 0 or iter == max_iters - 1:
@@ -178,12 +183,16 @@ def train(
             # Number of layers (blocks)
             num_layers = len(attention_matrices)
 
-            print(f"\n✅ {Fore.CYAN}The number of layers is {num_layers}...{Style.RESET_ALL}")
+            print(
+                f"\n✅ {Fore.CYAN}The number of layers is {num_layers}...{Style.RESET_ALL}"
+            )
 
             # Assuming all layers have the same number of heads
             num_heads_per_layer = len(attention_matrices[0]) if num_layers > 0 else 0
 
-            print(f"\n✅ {Fore.CYAN}The number of heads per layer is {num_heads_per_layer}...{Style.RESET_ALL}")
+            print(
+                f"\n✅ {Fore.CYAN}The number of heads per layer is {num_heads_per_layer}...{Style.RESET_ALL}"
+            )
 
             # Prepare input tensors for visualization
             # Creating a structure for Q, K, V separately, each will be a list of tensors
@@ -193,10 +202,15 @@ def train(
             for matrix_type in range(3):  # 0 for Q, 1 for K, 2 for V
                 # For each type, create a tensor that combines all layers and heads
                 combined_matrix = [
-                    torch.stack([attention_matrices[layer][head][matrix_type] for head in range(num_heads_per_layer)])
+                    torch.stack(
+                        [
+                            attention_matrices[layer][head][matrix_type]
+                            for head in range(num_heads_per_layer)
+                        ]
+                    )
                     for layer in range(num_layers)
                 ]
-                
+
                 # Append the combined matrix to the respective list
                 if matrix_type == 0:
                     input_tensors_Q.append(torch.stack(combined_matrix))
@@ -205,20 +219,37 @@ def train(
                 else:
                     input_tensors_V.append(torch.stack(combined_matrix))
 
-            print(f"\n✅ {Fore.CYAN}Shape of combined Q tensor: {input_tensors_Q[0].shape}{Style.RESET_ALL}")
-                
-            print(f"\n✅ {Fore.CYAN}Shape of combined K tensor: {input_tensors_K[0].shape}{Style.RESET_ALL}")
-                
-            print(f"\n✅ {Fore.CYAN}Shape of combined V tensor: {input_tensors_V[0].shape}{Style.RESET_ALL}")
-            
+            print(
+                f"\n✅ {Fore.CYAN}Shape of combined Q tensor: {input_tensors_Q[0].shape}{Style.RESET_ALL}"
+            )
+
+            print(
+                f"\n✅ {Fore.CYAN}Shape of combined K tensor: {input_tensors_K[0].shape}{Style.RESET_ALL}"
+            )
+
+            print(
+                f"\n✅ {Fore.CYAN}Shape of combined V tensor: {input_tensors_V[0].shape}{Style.RESET_ALL}"
+            )
+
             # At this point, input_tensors_Q, input_tensors_K, and input_tensors_V
             # each contains a single tensor structured as [layer, head, ...matrix dimensions...]
 
             # Now, visualize each tensor type in a grid
-            for tensors, name in zip([input_tensors_Q, input_tensors_K, input_tensors_V], ["Keys", "Values", "Queries"]):
+            for tensors, name in zip(
+                [input_tensors_Q, input_tensors_K, input_tensors_V],
+                ["Keys", "Values", "Queries"],
+            ):
                 visualize_attention(
-                    tensors, name, output_dir=heatmaps_dir, animation_dir=animations_dir, iter_num=iter, animation=True,
-                    grid_size=(num_layers, num_heads_per_layer)  # Assuming visualize_attention supports grid_size parameter
+                    tensors,
+                    name,
+                    output_dir=heatmaps_dir,
+                    animation_dir=animations_dir,
+                    iter_num=iter,
+                    animation=True,
+                    grid_size=(
+                        num_layers,
+                        num_heads_per_layer,
+                    ),  # Assuming visualize_attention supports grid_size parameter
                 )
 
             print(
@@ -228,8 +259,13 @@ def train(
         if iter == max_iters - 1:
             tensor_names = ["K", "V", "Q"]
             # Call the function to create animations for all tensor types
-            create_animation(tensor_names, output_dir=heatmaps_dir, animation_dir=animations_dir)
-            print(f"\n🎦 {Fore.BLUE}All animations created after iteration {iter + 1}.{Style.RESET_ALL}")
+            create_animation(
+                tensor_names, output_dir=heatmaps_dir, animation_dir=animations_dir
+            )
+            print(
+                f"\n🎦 {Fore.BLUE}All animations created after iteration {iter + 1}.{Style.RESET_ALL}"
+            )
+
 
 if __name__ == "__main__":
     # Set default hyperparameters and constants

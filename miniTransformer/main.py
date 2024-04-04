@@ -1,23 +1,25 @@
+"""Main module for the miniTransformer package execution.
+
+This script allows for training the miniTransformer model or generating text from a trained model.
+"""
+
 import argparse
-from miniTransformer.training.train import train, generate_text, BigramLanguageModel
+import os
+import sys
+import torch
+from miniTransformer.fitting.train import train, generate_text, BigramLanguageModel
 from miniTransformer.preprocessing.sourcing.sourcing import (
     load_data,
     create_char_mappings,
 )
-from miniTransformer.visuzalization.visualize_attention import create_animation
-import torch
-import sys
-import os
+
+# Assuming create_animation is used elsewhere or will be used in future updates.
 
 
 def parse_arguments():
+    """Parse command line arguments for the miniTransformer script."""
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
-
-    parser.add_argument(
-        "--root_dir",
-        type=str,
-        default="Code/juan-garassino",  # Specify the path as a single string
-    )
+    parser.add_argument("--root_dir", type=str, default="Code/juan-garassino")
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--block_size", type=int, default=32)
     parser.add_argument("--max_iters", type=int, default=500)
@@ -32,17 +34,11 @@ def parse_arguments():
     parser.add_argument("--n_layer", type=int, default=4)
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--colab", type=int, default=1)
-    parser.add_argument(
-        "--data_dir",
-        type=str,
-        default="/miniTransformer/data",
-    )
+    parser.add_argument("--data_dir", type=str, default="/miniTransformer/data")
     parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
     parser.add_argument(
-        "--checkpoints_dir",
-        type=str,
-        default="/miniTransformer/results/checkpoints",
+        "--checkpoints_dir", type=str, default="/miniTransformer/results/checkpoints"
     )
     parser.add_argument(
         "--heatmaps_dir", type=str, default="/miniTransformer/results/heatmaps"
@@ -59,89 +55,53 @@ def parse_arguments():
         help="Interval between saving attention heatmaps.",
     )
     parser.add_argument("--n_of_char", type=int, default=100)
-
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-
     args = parse_arguments()
 
+    # Adjust directories based on whether running in Colab or not
+
+    args.data_dir = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/")
+    )
+    args.checkpoints_dir = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.checkpoints_dir.lstrip("/")
+    )
+    args.heatmaps_dir = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.heatmaps_dir.lstrip("/")
+    )
+    args.animations_dir = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.animations_dir.lstrip("/")
+    )
+
     if args.generate:
-
-        if args.colab == 0:
-            # Assuming args.data_dir has been set up with another parser.add_argument call
-            args.data_dir = os.path.join(
-                os.environ.get("HOME"), args.root_dir, args.data_dir
-            )
-
-            args.checkpoint_dir = os.path.join(
-                os.environ.get("HOME"), args.root_dir, args.checkpoint_dir
-            )
-            
-            checkpoint_dir = (args.checkpoint_dir,)
-
         if args.checkpoint:
-
             device = torch.device(args.device)
-
-            print(checkpoint_dir)
-
-            print(args.checkpoint)
-
-            checkpoint = torch.load(
-                os.path.join(checkpoint_dir[0], args.checkpoint), map_location=device
-            )
-            
+            checkpoint_path = os.path.join(args.checkpoints_dir, args.checkpoint)
+            checkpoint = torch.load(checkpoint_path, map_location=device)
             model_state_dict = checkpoint["model_state_dict"]
-
-            char_to_int, int_to_char, vocab_size = create_char_mappings(
-                load_data(args.data_dir)  # , args.name)
-            )
-            
+            data = load_data(args.data_dir)
+            char_to_int, int_to_char, vocab_size = create_char_mappings(data)
             model = BigramLanguageModel(
                 vocab_size,
                 args.n_embd,
                 args.block_size,
                 args.n_head,
                 args.n_layer,
-                device,
+                args.dropout,
             ).to(device)
-            
             model.load_state_dict(model_state_dict)
-
             model.eval()
-
-            print("\n")
-
+            print("\nGenerating text:\n")
             for char in generate_text(
                 model, int_to_char, device, max_new_tokens=args.n_of_char
             ):
                 print(char, end="", flush=True)
-                sys.stdout.flush()
-
         else:
-            print("Please provide a checkpoint file to generate text.")
-    
+            print("Please provide a checkpoint file to generate text.", file=sys.stderr)
     else:
-
-        args.data_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.data_dir
-        )
-
-        args.checkpoints_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.checkpoints_dir
-        )
-
-        args.heatmaps_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.heatmaps_dir
-        )
-
-        args.animations_dir = os.path.join(
-            os.environ.get("HOME"), args.root_dir, args.animations_dir
-        )
-
         train(
             batch_size=args.batch_size,
             block_size=args.block_size,
@@ -161,5 +121,5 @@ if __name__ == "__main__":
             save_interval=args.save_interval,
             checkpoints_dir=args.checkpoints_dir,
             heatmaps_dir=args.heatmaps_dir,
-            animations_dir=args.animations_dir
+            animations_dir=args.animations_dir,
         )

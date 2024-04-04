@@ -21,6 +21,7 @@ black
 coverage
 flake8
 pytest
+pylint
 yapf
 
 # API
