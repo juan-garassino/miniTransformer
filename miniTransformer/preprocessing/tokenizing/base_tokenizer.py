@@ -11,15 +11,16 @@ from miniTransformer.preprocessing.tokenizing.helpers import render_token
 # -----------------------------------------------------------------------------
 # the base Tokenizer class
 
+
 class Tokenizer:
     """Base class for Tokenizers"""
 
     def __init__(self):
         # default: vocab size of 256 (all bytes), no merges, no patterns
-        self.merges = {} # (int, int) -> int
-        self.pattern = "" # str
-        self.special_tokens = {} # str -> int, e.g. {'<|endoftext|>': 100257}
-        self.vocab = self._build_vocab() # int -> bytes
+        self.merges = {}  # (int, int) -> int
+        self.pattern = ""  # str
+        self.special_tokens = {}  # str -> int, e.g. {'<|endoftext|>': 100257}
+        self.vocab = self._build_vocab()  # int -> bytes
 
     def train(self, text, vocab_size, verbose=False):
         # Tokenizer can train a vocabulary of size vocab_size from text
@@ -51,7 +52,7 @@ class Tokenizer:
         """
         # write the model: to be used in load() later
         model_file = file_prefix + ".model"
-        with open(model_file, 'w') as f:
+        with open(model_file, "w") as f:
             # write the version, pattern and merges, that's all that's needed
             f.write("minbpe v1\n")
             f.write(f"{self.pattern}\n")
@@ -92,7 +93,7 @@ class Tokenizer:
         merges = {}
         special_tokens = {}
         idx = 256
-        with open(model_file, 'r', encoding="utf-8") as f:
+        with open(model_file, "r", encoding="utf-8") as f:
             # read the version
             version = f.readline().strip()
             assert version == "minbpe v1"

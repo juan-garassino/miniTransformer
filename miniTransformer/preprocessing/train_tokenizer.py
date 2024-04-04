@@ -9,7 +9,7 @@ from miniTransformer.preprocessing.tokenizing.basic_tokenizer import BasicTokeni
 from miniTransformer.preprocessing.tokenizing.regex_tokenizer import RegexTokenizer
 
 # Get the project root directory from the environment variable
-project_root = os.environ.get('PROJECT_ROOT')
+project_root = os.environ.get("PROJECT_ROOT")
 
 # Construct the path to the data file
 data_file_path = os.path.join(project_root, "data", "data.txt")
@@ -33,7 +33,7 @@ for TokenizerClass, name in zip([BasicTokenizer, RegexTokenizer], ["basic", "reg
     # writes two files in the models directory: name.model, and name.vocab
     prefix = os.path.join(results_file_path, name)
     tokenizer.save(prefix)
-    
+
 t1 = time.time()
 
 print(f"Training took {t1 - t0:.2f} seconds")
