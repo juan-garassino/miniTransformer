@@ -1,7 +1,7 @@
 import os
 import torch
 from colorama import Fore, Style
-from miniTransformer.sourcing.sourcing import (
+from miniTransformer.preprocessing.sourcing.sourcing import (
     load_data,
     create_char_mappings,
     create_encoder_decoder,

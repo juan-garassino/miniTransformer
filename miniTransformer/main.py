@@ -1,6 +1,6 @@
 import argparse
 from miniTransformer.trainer.train import train, generate_text, BigramLanguageModel
-from miniTransformer.sourcing.sourcing import load_data, create_char_mappings
+from miniTransformer.preprocessing.sourcing.sourcing import load_data, create_char_mappings
 from miniTransformer.visuzalization.visualize_attention import create_animation
 import torch
 import sys
