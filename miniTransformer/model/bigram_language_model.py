@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from colorama import Fore, Style
-from miniTransformer.architecture.transformer_block import Block
+from miniTransformer.model.transformer_block import Block
 
 dropout = 0.0
 block_size = 32  # what is the maximum context length for predictions?

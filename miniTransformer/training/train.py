@@ -1,15 +1,15 @@
 import os
 import torch
 from colorama import Fore, Style
-from miniTransformer.preprocessing.sourcing.sourcing import (
+from miniTransformer.sourcing.sourcing import (
     load_data,
     create_char_mappings,
     create_encoder_decoder,
     create_train_val_splits,
 )
-from miniTransformer.architecture.bigram import BigramLanguageModel
-from miniTransformer.architecture.losses import estimate_loss, create_data_batch
-from miniTransformer.visuzalization.visualize_attention import (
+from miniTransformer.model.bigram_language_model import BigramLanguageModel
+from miniTransformer.model.losses import estimate_loss, create_data_batch
+from miniTransformer.evaluate.visualize_attention import (
     visualize_attention,
     create_animation,
 )
