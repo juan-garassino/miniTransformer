@@ -24,7 +24,8 @@ def save_checkpoint(model, optimizer, epoch, filename):
     }
     torch.save(checkpoint, filename)
 
-    print(f"\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
+    # print(f'\n')
+    print(f"\n\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
 import sys
@@ -115,12 +116,12 @@ def train(
     total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
     print(
-        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}"
+        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}", end=f'\n\n'
     )
 
     for iter in range(max_iters):
         # Sample a batch of data
-        print(f"\n✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}")
+        print(f"\r✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}", end=f'')
         
         xb, yb = create_data_batch(
             train_data,
@@ -132,7 +133,7 @@ def train(
         )
         
         # Evaluate the loss and update the model
-        print(f"\n✅ {Fore.CYAN}Updating the model parameters...{Style.RESET_ALL}")
+        print(f"\r✅ {Fore.CYAN}Updating the model parameters @ {iter}...{Style.RESET_ALL}", end=f'')
 
         logits, loss = model(xb, yb)
         optimizer.zero_grad(set_to_none=True)
@@ -144,8 +145,9 @@ def train(
             
             if not os.path.exists(checkpoints_dir):
                 os.makedirs(checkpoints_dir)
-
-            print(f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}")
+                
+                #print(f'\n')
+                print(f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}")
 
             save_checkpoint(
                 model,
@@ -168,7 +170,7 @@ def train(
                 device=device,
             )
             print(
-                f"\n✅ {Fore.MAGENTA}step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}"
+                f"\n✅ {Fore.MAGENTA}Step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}", end=f'\n'
             )
 
         # Save attention heatmaps periodically

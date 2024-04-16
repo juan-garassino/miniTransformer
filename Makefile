@@ -11,7 +11,7 @@ black:
 	@black scripts/* *.py */*.py */*/*.py
 
 syntax:
-	pylint *.py */*.py */*/*.py
+	@pylint *.py */*.py */*/*.py
 
 test:
 	@coverage run -m pytest tests/*.py
