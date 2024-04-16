@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from colorama import Fore, Style
 
 
-class Head(nn.Module):
+class AttentionHead(nn.Module):
     """
     One head of self-attention in a multi-head self-attention mechanism.
     """
@@ -77,7 +77,7 @@ class MultiHeadAttention(nn.Module):
 
         # Create a module list of self-attention heads
         self.heads = nn.ModuleList(
-            [Head(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
+            [AttentionHead(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
         )
 
         # Define the output projection linear layer

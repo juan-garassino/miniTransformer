@@ -1,6 +1,6 @@
 import torch.nn as nn
 
-from miniTransformer.architecture.head import MultiHeadAttention, FeedForward
+from miniTransformer.model.multihead_attention import MultiHeadAttention, FeedForward
 
 
 class Block(nn.Module):
