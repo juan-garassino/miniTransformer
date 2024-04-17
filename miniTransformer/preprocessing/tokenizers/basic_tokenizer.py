@@ -9,8 +9,8 @@ But:
 - Does not handle any special tokens.
 """
 
-from miniTransformer.preprocessing.tokenizing.base_tokenizer import Tokenizer
-from miniTransformer.preprocessing.tokenizing.helpers import get_stats, merge
+from miniTransformer.preprocessing.tokenizers.base_tokenizer import Tokenizer
+from miniTransformer.preprocessing.tokenizers.helpers import get_stats, merge
 
 
 class BasicTokenizer(Tokenizer):

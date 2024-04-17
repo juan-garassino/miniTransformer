@@ -6,7 +6,7 @@ e.g. isolating all regex/pattern parts to the RegexTokenizer, but
 some concessions are made for simplicity.
 """
 
-from miniTransformer.preprocessing.tokenizing.helpers import render_token
+from miniTransformer.preprocessing.tokenizers.helpers import render_token
 
 # -----------------------------------------------------------------------------
 # the base Tokenizer class

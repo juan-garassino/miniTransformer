@@ -5,7 +5,7 @@ loads the pretrained tokenizer from the `cl100k_base` tokenizer of tiktoken.
 """
 
 import tiktoken
-from miniTransformer.preprocessing.tokenizing.regex_tokenizer import RegexTokenizer
+from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
 
 
 def bpe(mergeable_ranks, token, max_rank):

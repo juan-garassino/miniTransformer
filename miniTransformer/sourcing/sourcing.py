@@ -2,6 +2,8 @@ import torch
 import os
 from colorama import Fore, Style
 
+from miniTransformer.utils.parse_arguments import parse_arguments
+
 def load_data(path):
     """
     Load the text data from all text files in a folder and return their concatenated content.
@@ -13,7 +15,9 @@ def load_data(path):
         text (str): The concatenated content of all text files in the folder.
     """
     # Get a list of all the files in the directory
-    files = os.listdir(path)
+    files = [file for file in os.listdir(path) if file.endswith(".txt")]
+
+    print(f"\n✅ {Fore.MAGENTA}There is {len(files)} files in the directory{Style.RESET_ALL}")
 
     # Initialize an empty string to store the concatenated content
     text = ""
@@ -29,50 +33,6 @@ def load_data(path):
     print(f"\n✅ {Fore.MAGENTA}Length of dataset in characters: {len(text)}{Style.RESET_ALL}")
 
     return text
-
-
-def create_char_mappings(text):
-    """
-    Create mappings between characters and integers for the given text.
-
-    Args:
-        text (str): The input text.
-
-    Returns:
-        char_to_int (dict): A dictionary mapping characters to integers.
-        int_to_char (dict): A dictionary mapping integers to characters.
-        vocab_size (int): The number of unique characters in the text.
-    """
-    # Get all the unique characters in the text
-    unique_chars = sorted(list(set(text)))
-    vocab_size = len(unique_chars)
-
-    # Create mappings between characters and integers
-    char_to_int = {ch: i for i, ch in enumerate(unique_chars)}
-    int_to_char = {i: ch for i, ch in enumerate(unique_chars)}
-
-    return char_to_int, int_to_char, vocab_size
-
-
-def create_encoder_decoder(char_to_int, int_to_char):
-    """
-    Create encoding and decoding functions for text data.
-
-    Args:
-        char_to_int (dict): A dictionary mapping characters to integers.
-        int_to_char (dict): A dictionary mapping integers to characters.
-
-    Returns:
-        encode_text (callable): A function that encodes a string to a list of integers.
-        decode_list (callable): A function that decodes a list of integers to a string.
-    """
-    # Encoder: convert a string to a list of integers
-    encode_text = lambda s: [char_to_int[c] for c in s]
-
-    # Decoder: convert a list of integers to a string
-    decode_list = lambda l: "".join([int_to_char[i] for i in l])
-
-    return encode_text, decode_list
 
 
 def create_train_val_splits(encoded_text, train_ratio=0.9):
@@ -130,25 +90,14 @@ def create_data_batch(
 
 
 if __name__ == "__main__":
-    text = "Hello, World!"
 
-    # Create character to integer and integer to character mappings
-    char_to_int, int_to_char, vocab_size = create_char_mappings(text)
+    args = parse_arguments()
 
-    # Create encoder and decoder functions
-    encode_text, decode_list = create_encoder_decoder(char_to_int, int_to_char)
+    path = os.path.join(os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/"))
 
-    # Encode the input text
-    encoded_text = encode_text(text)
+    #print(path)
 
-    # Create training and validation data splits
-    train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
+    data = load_data(path)
 
-    # Display the training and validation data
-    print("Train data:", train_data)
-    print("Validation data:", val_data)
+    #print(data[:100])
 
-    # Display the encoded and decoded text
-    print("Encoded text:", encoded_text)
-    decoded_text = decode_list(encoded_text)
-    print("Decoded text:", decoded_text)

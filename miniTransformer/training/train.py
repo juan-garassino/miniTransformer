@@ -1,12 +1,8 @@
 import os
 import torch
 from colorama import Fore, Style
-from miniTransformer.sourcing.sourcing import (
-    load_data,
-    create_char_mappings,
-    create_encoder_decoder,
-    create_train_val_splits,
-)
+from miniTransformer.sourcing.sourcing import load_data, create_train_val_splits
+from miniTransformer.preprocessing.tokenizers.simple_tokenizer import SimpleTokenizer
 from miniTransformer.model.bigram_language_model import BigramLanguageModel
 from miniTransformer.model.losses import estimate_loss, create_data_batch
 from miniTransformer.evaluate.visualize_attention import (
@@ -14,6 +10,7 @@ from miniTransformer.evaluate.visualize_attention import (
     create_animation,
 )
 import sys
+from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
 
 
 def save_checkpoint(model, optimizer, epoch, filename):
@@ -26,9 +23,6 @@ def save_checkpoint(model, optimizer, epoch, filename):
 
     # print(f'\n')
     print(f"\n\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
-
-
-import sys
 
 
 def generate_text(model, int_to_char, device, max_new_tokens=200):
@@ -90,13 +84,19 @@ def train(
     text = load_data(path)  # , name)
 
     print(f"\n🔀 {Fore.CYAN}Creating character mappings...{Style.RESET_ALL}")
-    char_to_int, int_to_char, vocab_size = create_char_mappings(text)
+    #char_to_int, int_to_char, vocab_size = create_char_mappings(text)
+    regex_tokenizer = RegexTokenizer()
+    
+    vocab_size=1024
+    
+    regex_tokenizer.train(text, vocab_size=vocab_size, verbose=True)
 
     print(f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}")
-    encode_text, decode_list = create_encoder_decoder(char_to_int, int_to_char)
+    #encoder, decoder = create_encoder_decoder(char_to_int, int_to_char)
+    encoded_text = regex_tokenizer.encode(text)
 
     print(f"\n🔤 {Fore.CYAN}Encoding the input text...{Style.RESET_ALL}")
-    encoded_text = encode_text(text)
+    #encoded_text = encode_text(text)
 
     print(
         f"\n🔄 {Fore.CYAN}Creating training and validation data splits...{Style.RESET_ALL}"
