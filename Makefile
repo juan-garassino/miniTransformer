@@ -28,6 +28,21 @@ clean:
 	@rm -fr miniTransformer-*.dist-info
 	@rm -fr miniTransformer.egg-info
 
+run_sourcing:
+	python -m miniTransformer.sourcing.sourcing \
+	--root_dir Code/juan-garassino/miniNetworks/ \
+	--data_dir miniTransformer/data
+
+run_simple_tokenizer:
+	python -m miniTransformer.preprocessing.tokenizers.simple_tokenizer \
+	--root_dir Code/juan-garassino/miniNetworks/ \
+	--data_dir miniTransformer/data
+
+run_regex_tokenizer:
+	python -m miniTransformer.preprocessing.tokenizers.regex_tokenizer \
+	--root_dir Code/juan-garassino/miniNetworks/ \
+	--data_dir miniTransformer/data
+
 run_training:
 	python -m miniTransformer.main \
 	--root_dir Code/juan-garassino/miniNetworks/ \

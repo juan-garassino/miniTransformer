@@ -5,8 +5,8 @@ The whole thing runs in ~25 seconds on my laptop.
 
 import os
 import time
-from miniTransformer.preprocessing.tokenizing.basic_tokenizer import BasicTokenizer
-from miniTransformer.preprocessing.tokenizing.regex_tokenizer import RegexTokenizer
+from miniTransformer.preprocessing.tokenizers.basic_tokenizer import BasicTokenizer
+from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
 
 # Get the project root directory from the environment variable
 project_root = os.environ.get("PROJECT_ROOT")
@@ -18,7 +18,7 @@ data_file_path = os.path.join(project_root, "data", "data.txt")
 with open(data_file_path, "r", encoding="utf-8") as file:
     text = file.read()
 
-results_file_path = os.path.join(project_root, "results", "models")
+results_file_path = os.path.join(project_root, "results", "tokenizers_models")
 
 # create a directory for models, so we don't pollute the current directory
 os.makedirs(results_file_path, exist_ok=True)

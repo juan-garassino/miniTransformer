@@ -10,16 +10,17 @@ Unlike BasicTokenizer:
 """
 
 import regex as re
-from miniTransformer.preprocessing.tokenizing.base_tokenizer import Tokenizer
-from miniTransformer.preprocessing.tokenizing.helpers import (
-    get_stats,
-    render_token,
-    merge,
-)
+import os
+from colorama import Fore, Style
 
+from miniTransformer.preprocessing.tokenizers.base_tokenizer import Tokenizer
+from miniTransformer.preprocessing.tokenizers.helpers import get_stats, merge
+from miniTransformer.sourcing.sourcing import create_train_val_splits, load_data
+from miniTransformer.utils.parse_arguments import parse_arguments
 
 # the main GPT text split patterns, see
 # https://github.com/openai/tiktoken/blob/main/tiktoken_ext/openai_public.py
+
 GPT2_SPLIT_PATTERN = (
     r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 )
@@ -40,7 +41,7 @@ class RegexTokenizer(Tokenizer):
         self.special_tokens = {}
         self.inverse_special_tokens = {}
 
-    def train(self, text, vocab_size, verbose=False):
+    def train(self, text, vocab_size=256, verbose=False):
         assert vocab_size >= 256
         num_merges = vocab_size - 256
 
@@ -50,15 +51,21 @@ class RegexTokenizer(Tokenizer):
         # input text preprocessing
         ids = [list(ch.encode("utf-8")) for ch in text_chunks]
 
+        print(f"\n✅ {Fore.MAGENTA}Word '{text_chunks[0]}' represented as {ids[0]}{Style.RESET_ALL}", end="\n\n")
+
         # iteratively merge the most common pairs to create new tokens
         merges = {}  # (int, int) -> int
+        
         vocab = {idx: bytes([idx]) for idx in range(256)}  # idx -> bytes
+        
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}
+            
             for chunk_ids in ids:
                 # passing in stats will update it in place, adding up counts
                 get_stats(chunk_ids, stats)
+            
             # find the pair with the highest count
             pair = max(stats, key=stats.get)
             # mint a new token: assign it the next available id
@@ -71,7 +78,7 @@ class RegexTokenizer(Tokenizer):
             # prints
             if verbose:
                 print(
-                    f"merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences"
+                    f"\r✅ Merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences", end="", flush=True
                 )
 
         # save class variables
@@ -173,3 +180,31 @@ class RegexTokenizer(Tokenizer):
                 # this is an ordinary sequence, encode it normally
                 ids.extend(self.encode_ordinary(part))
         return ids
+
+if __name__ == "__main__":
+
+    args = parse_arguments()
+
+    path = os.path.join(os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/"))
+
+    data = load_data(path)
+
+    regex_tokenizer =  RegexTokenizer()
+
+    regex_tokenizer.train(data, vocab_size=512, verbose=True)
+
+    # Encode the input text
+    encoded_text = regex_tokenizer.encode(data)
+
+    # Create training and validation data splits
+    train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
+
+    # Display the training and validation data
+    print("Train data:", train_data[:10])
+
+    print("Validation data:", val_data[:10])
+
+    # Display the encoded and decoded text
+    print("Encoded text:", encoded_text[:10])
+    decoded_text = regex_tokenizer.decode(encoded_text)
+    print("Decoded text:", decoded_text[:10])
