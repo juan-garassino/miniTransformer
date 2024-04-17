@@ -32,6 +32,9 @@ def parse_arguments():
     parser.add_argument(
         "--animations_dir", type=str, default="/miniTransformer/results/animations"
     )
+    parser.add_argument(
+        "--tokenizers_dir", type=str, default="/miniTransformer/results/tokenizers"
+    )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument(
