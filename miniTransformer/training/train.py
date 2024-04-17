@@ -25,39 +25,31 @@ def save_checkpoint(model, optimizer, epoch, filename):
     print(f"\n\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
-def generate_text(model, int_to_char, device, max_new_tokens=200):
-    context = torch.zeros((1, 1), dtype=torch.long, device=device)
 
-    generated_tokens = model.generate_iter(context, max_new_tokens=max_new_tokens)
-
-    for tokens in generated_tokens:
-        for token in tokens:
-            token = token.item()
-            if token in int_to_char:
-                char = int_to_char[token]
-                yield char
 
 
 def train(
-    batch_size,
-    block_size,
-    max_iters,
-    eval_interval,
-    learning_rate,
-    device,
-    eval_iters,
-    n_embd,
-    n_head,
-    n_layer,
-    dropout,
-    colab,
-    path,
-    name,
-    save_interval,
-    heatmaps_dir,
-    animations_dir,
-    checkpoints_dir,
-    heatmap_interval,
+    batch_size=16,
+    block_size=32,
+    vocab_size=256,
+    max_iters=1000,
+    tokenizer='regex',
+    eval_interval=100,
+    learning_rate=1e-3,
+    device='cpu',
+    eval_iters=10,
+    embd_dim=32,
+    n_head=4,
+    n_layer=4,
+    dropout=0.0,
+    colab=0,
+    path=None,
+    name=None,
+    save_interval=25,
+    heatmaps_dir=25,
+    animations_dir=None,
+    checkpoints_dir=None,
+    heatmap_interval=25,
 ):
     """
     Train the BigramLanguageModel.
@@ -69,7 +61,7 @@ def train(
     :param learning_rate: Learning rate for the optimizer
     :param device: Device (CPU or GPU) to run the model on
     :param eval_iters: Number of iterations for loss estimation
-    :param n_embd: Embedding size
+    :param embd_dim: Embedding size
     :param n_head: Number of attention heads
     :param n_layer: Number of layers
     :param dropout: Dropout rate
@@ -83,13 +75,24 @@ def train(
     print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
     text = load_data(path)  # , name)
 
-    print(f"\n🔀 {Fore.CYAN}Creating character mappings...{Style.RESET_ALL}")
+    print(f"\n🔀 {Fore.CYAN}Creating character mappings using {tokenizer} tokenizer...{Style.RESET_ALL}")
     #char_to_int, int_to_char, vocab_size = create_char_mappings(text)
     regex_tokenizer = RegexTokenizer()
-    
-    vocab_size=1024
-    
+
+    project_root = os.environ.get("PROJECT_ROOT")
+
+    results_file_path = os.path.join(project_root, "results", "tokenizers")
+
+    if not os.path.exists(results_file_path):
+        os.makedirs(results_file_path)
+
+    name = f'{tokenizer}{vocab_size}'
+
+    prefix = os.path.join(results_file_path, name)
+
     regex_tokenizer.train(text, vocab_size=vocab_size, verbose=True)
+
+    regex_tokenizer.save(prefix)
 
     print(f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}")
     #encoder, decoder = create_encoder_decoder(char_to_int, int_to_char)
@@ -105,7 +108,7 @@ def train(
 
     print(f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}")
 
-    model = BigramLanguageModel(vocab_size, n_embd, block_size, n_head, n_layer, device)
+    model = BigramLanguageModel(vocab_size=vocab_size, embd_dim=embd_dim, block_size=block_size, n_head=n_head, n_layer=n_layer, dropout=dropout, device=device)
 
     m = model.to(device)
     print(f"\n🔄 {Fore.GREEN}Moved the model to the device{Style.RESET_ALL}")
@@ -154,7 +157,7 @@ def train(
                 optimizer,
                 iter,
                 os.path.join(checkpoints_dir, f"checkpoint_{iter}.pt"),
-            )
+            ) # TODO save checkpoint from the model class?
 
         # Evaluation periodically
         if iter % eval_interval == 0 or iter == max_iters - 1:
@@ -280,7 +283,7 @@ if __name__ == "__main__":
         learning_rate=1e-3,
         device="cuda" if torch.cuda.is_available() else "cpu",
         eval_iters=200,
-        n_embd=64,
+        embd_dim=64,
         n_head=4,
         n_layer=4,
         dropout=0.0,

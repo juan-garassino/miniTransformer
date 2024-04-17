@@ -48,12 +48,13 @@ run_training:
 	--root_dir Code/juan-garassino/miniNetworks/ \
 	--batch_size 16 \
 	--block_size 32 \
-	--max_iters 1000 \
+	--vocab_size 260 \
+	--max_iters 500 \
 	--eval_interval 100 \
 	--learning_rate 1e-3 \
 	--device cpu \
 	--eval_iters 10 \
-	--n_embd 64 \
+	--embd_dim 64 \
 	--n_head 4 \
 	--n_layer 4 \
 	--dropout 0.0 \
@@ -63,16 +64,18 @@ run_training:
 	--checkpoints_dir miniTransformer/results/checkpoints \
 	--save_interval 100 \
 	--heatmaps_dir miniTransformer/results/heatmaps \
-	--heatmap_interval 500 \
+	--heatmap_interval 200 \
 	--animations_dir miniTransformer/results/animations
 
 run_generation:
 	python -m miniTransformer.main \
+	--root_dir code/juan-garassino/miniNetworks/ \
 	--generate \
 	--colab 0 \
-	--checkpoint_dir miniTransformer/miniTransformer/checkpoints \
-	--checkpoint checkpoint_999.pt \
-	--n_of_char 2000
+	--checkpoints_dir miniTransformer/results/checkpoints \
+	--checkpoint checkpoint_499.pt \
+	--n_of_char 2000 \
+	--vocab_size 260
 
 install:
 	@pip install . -U

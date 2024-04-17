@@ -9,13 +9,13 @@ class AttentionHead(nn.Module):
     One head of self-attention in a multi-head self-attention mechanism.
     """
 
-    def __init__(self, head_size, n_embd, block_size, dropout, verbose=False):
+    def __init__(self, head_size, embd_dim, block_size, dropout, verbose=False):
         super().__init__()
 
         # Define the key, query, and value linear layers without bias
-        self.key = nn.Linear(n_embd, head_size, bias=False)
-        self.query = nn.Linear(n_embd, head_size, bias=False)
-        self.value = nn.Linear(n_embd, head_size, bias=False)
+        self.key = nn.Linear(embd_dim, head_size, bias=False)
+        self.query = nn.Linear(embd_dim, head_size, bias=False)
+        self.value = nn.Linear(embd_dim, head_size, bias=False)
         self.verbose = verbose
 
         # Register a lower triangular matrix used for masking
@@ -72,16 +72,16 @@ class MultiHeadAttention(nn.Module):
     Multiple heads of self-attention in parallel.
     """
 
-    def __init__(self, num_heads, head_size, n_embd, dropout):
+    def __init__(self, num_heads, head_size, embd_dim, dropout):
         super().__init__()
 
         # Create a module list of self-attention heads
         self.heads = nn.ModuleList(
-            [AttentionHead(head_size, n_embd, n_embd, dropout) for _ in range(num_heads)]
+            [AttentionHead(head_size, embd_dim, embd_dim, dropout) for _ in range(num_heads)]
         )
 
         # Define the output projection linear layer
-        self.proj = nn.Linear(n_embd, n_embd)
+        self.proj = nn.Linear(embd_dim, embd_dim)
 
         # Define the dropout layer
         self.dropout = nn.Dropout(dropout)
@@ -107,14 +107,14 @@ class FeedForward(nn.Module):
     A simple linear layer followed by a non-linearity.
     """
 
-    def __init__(self, n_embd, dropout):
+    def __init__(self, embd_dim, dropout):
         super().__init__()
 
         # Define the feed-forward network using a sequential container
         self.net = nn.Sequential(
-            nn.Linear(n_embd, 4 * n_embd),
+            nn.Linear(embd_dim, 4 * embd_dim),
             nn.ReLU(),
-            nn.Linear(4 * n_embd, n_embd),
+            nn.Linear(4 * embd_dim, embd_dim),
             nn.Dropout(dropout),
         )
 

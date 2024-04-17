@@ -14,37 +14,37 @@ class BigramLanguageModel(nn.Module):
 
     Args:
         vocab_size (int): The size of the vocabulary.
-        n_embd (int): The size of the token and position embeddings.
+        embd_dim (int): The size of the token and position embeddings.
         block_size (int): The sequence length (block size) of the input.
         n_head (int): The number of attention heads.
         n_layer (int): The number of Transformer layers.
         device (torch.device): The device to run the model on (CPU or GPU).
     """
 
-    def __init__(self, vocab_size, n_embd, block_size, n_head, n_layer, device):
+    def __init__(self, vocab_size=256, embd_dim=64, block_size=32, n_head=4, n_layer=4, dropout=0.0, device=None):
         super().__init__()
 
         print(f"\n✅ {Fore.CYAN}BigramLanguageModel Initialized...{Style.RESET_ALL}")
 
         # Define the token and position embedding tables
-        self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
-        self.position_embedding_table = nn.Embedding(block_size, n_embd)
+        self.token_embedding_table = nn.Embedding(vocab_size, embd_dim)
+        self.position_embedding_table = nn.Embedding(block_size, embd_dim)
 
         # Create the Transformer blocks
         self.blocks = nn.Sequential(
-            *[Block(n_embd, n_head, dropout) for _ in range(n_layer)]
+            *[Block(embd_dim, n_head, dropout) for _ in range(n_layer)]
         )
 
         # Define the final layer normalization layer
-        self.ln_f = nn.LayerNorm(n_embd)
+        self.ln_f = nn.LayerNorm(embd_dim)
 
         # Define the language model head
-        self.lm_head = nn.Linear(n_embd, vocab_size)
+        self.lm_head = nn.Linear(embd_dim, vocab_size)
 
         self.device = device
 
         print(f"\n🔢 {Fore.YELLOW}Number of Attention Heads: {n_head}{Style.RESET_ALL}")
-        print(f"\n🔢 {Fore.YELLOW}Embedding Size: {n_embd}{Style.RESET_ALL}")
+        print(f"\n🔢 {Fore.YELLOW}Embedding Size: {embd_dim}{Style.RESET_ALL}")
 
         print(f"\n🔢 {Fore.YELLOW}Block Size: {block_size}{Style.RESET_ALL}")
 

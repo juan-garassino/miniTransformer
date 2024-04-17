@@ -5,9 +5,8 @@ This script allows for training the miniTransformer model or generating text fro
 
 import os
 from miniTransformer.utils.parse_arguments import parse_arguments
-from miniTransformer.generate.generate import generate_text_from_checkpoint
-from miniTransformer.training.train import train, generate_text, BigramLanguageModel
-
+from miniTransformer.generate.generate import generate_text_from_checkpoint, generate_text
+from miniTransformer.training.train import train, BigramLanguageModel
 # Assuming create_animation is used elsewhere or will be used in future updates.
 
 if __name__ == "__main__":
@@ -26,31 +25,33 @@ if __name__ == "__main__":
     args.animations_dir = os.path.join(
         os.environ.get("HOME"), args.root_dir, args.animations_dir.lstrip("/")
     )
-
+    
     if args.generate:
         if args.checkpoint:
             generate_text_from_checkpoint(
-                                        args.checkpoint_path,
-                                        args.checkpoints_dir,
-                                        args.data_dir,
-                                        args.device,
-                                        args.n_embd,
-                                        args.block_size,
-                                        args.n_head,
-                                        args.n_layer,
-                                        args.dropout,
-                                        args.n_of_char
+                                        checkpoint=args.checkpoint,
+                                        checkpoints_dir=args.checkpoints_dir,
+                                        data_dir=args.data_dir, # TODO remove data dir from here and just load the pretrained tokenizer
+                                        device=args.device,
+                                        embd_dim=args.embd_dim,
+                                        block_size=args.block_size,
+                                        n_head=args.n_head,
+                                        n_layer=args.n_layer,
+                                        dropout=args.dropout,
+                                        n_of_char=args.n_of_char,
+                                        vocab_size=args.vocab_size
                                     )
     else:
         train(
             batch_size=args.batch_size,
             block_size=args.block_size,
+            vocab_size=args.vocab_size,
             max_iters=args.max_iters,
             eval_interval=args.eval_interval,
             learning_rate=args.learning_rate,
             device=args.device,
             eval_iters=args.eval_iters,
-            n_embd=args.n_embd,
+            embd_dim=args.embd_dim,
             n_head=args.n_head,
             n_layer=args.n_layer,
             dropout=args.dropout,
