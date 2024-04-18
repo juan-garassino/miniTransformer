@@ -1,14 +1,14 @@
-"""Main module for the miniTransformer package execution.
+"""
+Main module for the miniTransformer package execution.
 
 This script allows for training the miniTransformer model or generating text from a trained model.
 """
 
 import os
+
 from miniTransformer.utils.parse_arguments import parse_arguments
-from miniTransformer.generate.generate import (
-    generate_text_from_checkpoint,
-)  # , generate_text
-from miniTransformer.training.train import train, BigramLanguageModel
+from miniTransformer.generate.generate import generate_text_from_checkpoint
+from miniTransformer.training.train import train
 
 # Assuming create_animation is used elsewhere or will be used in future updates.
 

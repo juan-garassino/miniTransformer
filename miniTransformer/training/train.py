@@ -2,10 +2,7 @@ import os
 import torch
 from colorama import Fore, Style
 from miniTransformer.sourcing.sourcing import load_data, create_train_val_splits
-from miniTransformer.preprocessing.tokenizers.simple_tokenizer import (
-    SimpleTokenizer,
-    CombinedTokenizer,
-)
+from miniTransformer.preprocessing.tokenizers.simple_tokenizer import SimpleTokenizer
 from miniTransformer.model.bigram_language_model import BigramLanguageModel
 from miniTransformer.model.losses import estimate_loss, create_data_batch
 from miniTransformer.evaluate.visualize_attention import (
@@ -42,7 +39,7 @@ def train(
     n_head=4,
     n_layer=4,
     dropout=0.0,
-    colab=0,
+    colab=0,  # TODO this also needs to be removed
     path=None,
     name=None,
     save_interval=25,
@@ -103,7 +100,7 @@ def train(
 
     if tokenizer == "simple":
 
-        combine_tokenizer = CombinedTokenizer()
+        combine_tokenizer = SimpleTokenizer() # TODO change the name of the tokenizer
 
         vocab_size = combine_tokenizer.train(text, verbose=True)
 

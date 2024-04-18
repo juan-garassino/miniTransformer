@@ -158,13 +158,3 @@ class BigramLanguageModel(nn.Module):
             all_attention_heads.append(block_heads)
 
         return all_attention_heads
-
-    # @property
-    # def attention_heads(self):
-    #     """
-    #     A property that returns the attention heads from the first Transformer block.
-
-    #     Returns:
-    #         attention_heads (list): A list of attention heads from the first Transformer block.
-    #     """
-    #     return self.blocks[0].sa.heads

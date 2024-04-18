@@ -50,7 +50,7 @@ run_training:
 	--batch_size 16 \
 	--block_size 32 \
 	--vocab_size 260 \
-	--max_iters 5000 \
+	--max_iters 100 \
 	--eval_interval 100 \
 	--learning_rate 1e-3 \
 	--device cpu \
