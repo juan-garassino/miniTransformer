@@ -7,6 +7,7 @@ some concessions are made for simplicity.
 """
 
 from miniTransformer.preprocessing.tokenizers.helpers import render_token
+from colorama import Fore, Style
 
 # -----------------------------------------------------------------------------
 # the base Tokenizer class
@@ -50,6 +51,9 @@ class Tokenizer:
         - model file is the critical one, intended for load()
         - vocab file is just a pretty printed version for human inspection only
         """
+
+        print(f"\n🔢 {Fore.CYAN}Saving mapping dictionaty...{Style.RESET_ALL}")
+
         # write the model: to be used in load() later
         model_file = file_prefix + ".model"
         with open(model_file, "w") as f:
@@ -86,8 +90,13 @@ class Tokenizer:
                     # (this should just be the first 256 tokens, the bytes)
                     f.write(f"[{s}] {idx}\n")
 
+        print(f"\n🔢 {Fore.CYAN}Saved mapping dictionaty...{Style.RESET_ALL}")
+
     def load(self, model_file):
         """Inverse of save() but only for the model file"""
+
+        print(f"\n🔢 {Fore.CYAN}Loading mapping dictionaty...{Style.RESET_ALL}")
+
         assert model_file.endswith(".model")
         # read the model file
         merges = {}
@@ -112,3 +121,5 @@ class Tokenizer:
         self.merges = merges
         self.special_tokens = special_tokens
         self.vocab = self._build_vocab()
+
+        print(f"\n🔢 {Fore.CYAN}Loaded mapping dictionaty...{Style.RESET_ALL}")

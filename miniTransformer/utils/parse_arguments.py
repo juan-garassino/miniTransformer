@@ -1,6 +1,7 @@
 import argparse
 import torch
 
+
 def parse_arguments():
     """Parse command line arguments for the miniTransformer script."""
     parser = argparse.ArgumentParser(description="Train a miniTransformer model.")
@@ -8,6 +9,8 @@ def parse_arguments():
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--block_size", type=int, default=32)
     parser.add_argument("--vocab_size", type=int, default=256)
+    parser.add_argument("--tokenizer", type=str, default="regex")
+
     parser.add_argument("--max_iters", type=int, default=500)
     parser.add_argument("--eval_interval", type=int, default=100)
     parser.add_argument("--learning_rate", type=float, default=1e-3)
@@ -31,6 +34,9 @@ def parse_arguments():
     )
     parser.add_argument(
         "--animations_dir", type=str, default="/miniTransformer/results/animations"
+    )
+    parser.add_argument(
+        "--tokenizers_dir", type=str, default="/miniTransformer/results/tokenizers"
     )
     parser.add_argument("--generate", action="store_true")
     parser.add_argument("--checkpoint", type=str, default=None)

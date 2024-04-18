@@ -42,6 +42,11 @@ class RegexTokenizer(Tokenizer):
         self.inverse_special_tokens = {}
 
     def train(self, text, vocab_size=256, verbose=False):
+
+        print(
+            f"\n🔀 {Fore.CYAN}Creating character mappings using regex tokenizer...{Style.RESET_ALL}"
+        )
+
         assert vocab_size >= 256
         num_merges = vocab_size - 256
 
@@ -51,21 +56,24 @@ class RegexTokenizer(Tokenizer):
         # input text preprocessing
         ids = [list(ch.encode("utf-8")) for ch in text_chunks]
 
-        print(f"\n✅ {Fore.MAGENTA}Word '{text_chunks[0]}' represented as {ids[0]}{Style.RESET_ALL}", end="\n\n")
+        print(
+            f"\n✅ {Fore.MAGENTA}Word '{text_chunks[0]}' represented as {ids[0]}{Style.RESET_ALL}",
+            end="\n\n",
+        )
 
         # iteratively merge the most common pairs to create new tokens
         merges = {}  # (int, int) -> int
-        
+
         vocab = {idx: bytes([idx]) for idx in range(256)}  # idx -> bytes
-        
+
         for i in range(num_merges):
             # count the number of times every consecutive pair appears
             stats = {}
-            
+
             for chunk_ids in ids:
                 # passing in stats will update it in place, adding up counts
                 get_stats(chunk_ids, stats)
-            
+
             # find the pair with the highest count
             pair = max(stats, key=stats.get)
             # mint a new token: assign it the next available id
@@ -78,7 +86,9 @@ class RegexTokenizer(Tokenizer):
             # prints
             if verbose:
                 print(
-                    f"\r✅ Merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences", end="", flush=True
+                    f"\r✅ Merge {i+1}/{num_merges}: {pair} -> {idx} ({vocab[idx]}) had {stats[pair]} occurrences",
+                    end="",
+                    flush=True,
                 )
 
         # save class variables
@@ -181,15 +191,18 @@ class RegexTokenizer(Tokenizer):
                 ids.extend(self.encode_ordinary(part))
         return ids
 
+
 if __name__ == "__main__":
 
     args = parse_arguments()
 
-    path = os.path.join(os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/"))
+    path = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/")
+    )
 
     data = load_data(path)
 
-    regex_tokenizer =  RegexTokenizer()
+    regex_tokenizer = RegexTokenizer()
 
     regex_tokenizer.train(data, vocab_size=512, verbose=True)
 

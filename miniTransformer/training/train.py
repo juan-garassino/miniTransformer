@@ -2,7 +2,10 @@ import os
 import torch
 from colorama import Fore, Style
 from miniTransformer.sourcing.sourcing import load_data, create_train_val_splits
-from miniTransformer.preprocessing.tokenizers.simple_tokenizer import SimpleTokenizer
+from miniTransformer.preprocessing.tokenizers.simple_tokenizer import (
+    SimpleTokenizer,
+    CombinedTokenizer,
+)
 from miniTransformer.model.bigram_language_model import BigramLanguageModel
 from miniTransformer.model.losses import estimate_loss, create_data_batch
 from miniTransformer.evaluate.visualize_attention import (
@@ -25,18 +28,15 @@ def save_checkpoint(model, optimizer, epoch, filename):
     print(f"\n\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
-
-
-
 def train(
     batch_size=16,
     block_size=32,
     vocab_size=256,
     max_iters=1000,
-    tokenizer='regex',
+    tokenizer="regex",
     eval_interval=100,
     learning_rate=1e-3,
-    device='cpu',
+    device="cpu",
     eval_iters=10,
     embd_dim=32,
     n_head=4,
@@ -72,60 +72,88 @@ def train(
     :param checkpoints_dir: Directory to save the model checkpoints
     :param heatmap_interval: Interval to save attention heatmaps
     """
-    print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
-    text = load_data(path)  # , name)
 
-    print(f"\n🔀 {Fore.CYAN}Creating character mappings using {tokenizer} tokenizer...{Style.RESET_ALL}")
-    #char_to_int, int_to_char, vocab_size = create_char_mappings(text)
-    regex_tokenizer = RegexTokenizer()
+    text = load_data(path)
 
     project_root = os.environ.get("PROJECT_ROOT")
 
     results_file_path = os.path.join(project_root, "results", "tokenizers")
 
-    if not os.path.exists(results_file_path):
-        os.makedirs(results_file_path)
-
-    name = f'{tokenizer}{vocab_size}'
+    name = f"{tokenizer}{vocab_size}"
 
     prefix = os.path.join(results_file_path, name)
 
-    regex_tokenizer.train(text, vocab_size=vocab_size, verbose=True)
+    # char_to_int, int_to_char, vocab_size = create_char_mappings(text)
 
-    regex_tokenizer.save(prefix)
+    if not os.path.exists(results_file_path):
+        os.makedirs(results_file_path)
 
-    print(f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}")
-    #encoder, decoder = create_encoder_decoder(char_to_int, int_to_char)
-    encoded_text = regex_tokenizer.encode(text)
+    if tokenizer == "regex":
+        regex_tokenizer = RegexTokenizer()
 
-    print(f"\n🔤 {Fore.CYAN}Encoding the input text...{Style.RESET_ALL}")
-    #encoded_text = encode_text(text)
+        regex_tokenizer.train(text, vocab_size=vocab_size, verbose=True)
 
-    print(
-        f"\n🔄 {Fore.CYAN}Creating training and validation data splits...{Style.RESET_ALL}"
-    )
+        name = f"{tokenizer}{vocab_size}"
+
+        prefix = os.path.join(results_file_path, name)
+
+        regex_tokenizer.save(prefix)
+
+        encoded_text = regex_tokenizer.encode(text)
+
+    if tokenizer == "simple":
+
+        combine_tokenizer = CombinedTokenizer()
+
+        vocab_size = combine_tokenizer.train(text, verbose=True)
+
+        name = f"{tokenizer}{vocab_size}"
+
+        prefix = os.path.join(results_file_path, name)
+
+        combine_tokenizer.save(prefix)
+
+        encoded_text = combine_tokenizer.encode(text)
+
+    # print(f"\n🔢 {Fore.CYAN}Creating encoder and decoder functions...{Style.RESET_ALL}")
+    # encoder, decoder = create_encoder_decoder(char_to_int, int_to_char)
+
+    # print(f"\n🔤 {Fore.CYAN}Encoding the input text...{Style.RESET_ALL}")
+    # encoded_text = encode_text(text)
+
     train_data, val_data = create_train_val_splits(encoded_text, train_ratio=0.9)
 
-    print(f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}")
+    # print(f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}")
 
-    model = BigramLanguageModel(vocab_size=vocab_size, embd_dim=embd_dim, block_size=block_size, n_head=n_head, n_layer=n_layer, dropout=dropout, device=device)
+    model = BigramLanguageModel(
+        vocab_size=vocab_size,
+        embd_dim=embd_dim,
+        block_size=block_size,
+        n_head=n_head,
+        n_layer=n_layer,
+        dropout=dropout,
+        device=device,
+    )
 
     m = model.to(device)
+
     print(f"\n🔄 {Fore.GREEN}Moved the model to the device{Style.RESET_ALL}")
 
     print(f"\n✅ {Fore.CYAN}Creating a PyTorch optimizer...{Style.RESET_ALL}")
+
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
     total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
     print(
-        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}", end=f'\n\n'
+        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}",
+        end=f"\n\n",
     )
 
     for iter in range(max_iters):
         # Sample a batch of data
-        print(f"\r✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}", end=f'')
-        
+        print(f"\r✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}", end=f"")
+
         xb, yb = create_data_batch(
             train_data,
             val_data,
@@ -134,9 +162,12 @@ def train(
             batch_size=batch_size,
             device=device,
         )
-        
+
         # Evaluate the loss and update the model
-        print(f"\r✅ {Fore.CYAN}Updating the model parameters @ {iter}...{Style.RESET_ALL}", end=f'')
+        print(
+            f"\r✅ {Fore.CYAN}Updating the model parameters @ {iter}...{Style.RESET_ALL}",
+            end=f"",
+        )
 
         logits, loss = model(xb, yb)
         optimizer.zero_grad(set_to_none=True)
@@ -145,19 +176,21 @@ def train(
 
         # Save model periodically
         if iter % save_interval == 0 or iter == max_iters - 1:
-            
+
             if not os.path.exists(checkpoints_dir):
                 os.makedirs(checkpoints_dir)
-                
-                #print(f'\n')
-                print(f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}")
+
+                # print(f'\n')
+                print(
+                    f"\n✅ {Fore.GREEN}Checkpoint directory was created{Style.RESET_ALL}"
+                )
 
             save_checkpoint(
                 model,
                 optimizer,
                 iter,
                 os.path.join(checkpoints_dir, f"checkpoint_{iter}.pt"),
-            ) # TODO save checkpoint from the model class?
+            )  # TODO save checkpoint from the model class?
 
         # Evaluation periodically
         if iter % eval_interval == 0 or iter == max_iters - 1:
@@ -173,7 +206,8 @@ def train(
                 device=device,
             )
             print(
-                f"\n✅ {Fore.MAGENTA}Step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}", end=f'\n'
+                f"\n✅ {Fore.MAGENTA}Step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}{Style.RESET_ALL}",
+                end=f"\n",
             )
 
         # Save attention heatmaps periodically

@@ -21,10 +21,21 @@ class BigramLanguageModel(nn.Module):
         device (torch.device): The device to run the model on (CPU or GPU).
     """
 
-    def __init__(self, vocab_size=256, embd_dim=64, block_size=32, n_head=4, n_layer=4, dropout=0.0, device=None):
+    def __init__(
+        self,
+        vocab_size=256,
+        embd_dim=64,
+        block_size=32,
+        n_head=4,
+        n_layer=4,
+        dropout=0.0,
+        device=None,
+    ):
         super().__init__()
 
-        print(f"\n✅ {Fore.CYAN}BigramLanguageModel Initialized...{Style.RESET_ALL}")
+        print(
+            f"\n🔄 {Fore.CYAN}Instantiating the BigramLanguageModel...{Style.RESET_ALL}"
+        )
 
         # Define the token and position embedding tables
         self.token_embedding_table = nn.Embedding(vocab_size, embd_dim)
@@ -44,9 +55,12 @@ class BigramLanguageModel(nn.Module):
         self.device = device
 
         print(f"\n🔢 {Fore.YELLOW}Number of Attention Heads: {n_head}{Style.RESET_ALL}")
+
         print(f"\n🔢 {Fore.YELLOW}Embedding Size: {embd_dim}{Style.RESET_ALL}")
 
         print(f"\n🔢 {Fore.YELLOW}Block Size: {block_size}{Style.RESET_ALL}")
+
+        print(f"\n✅ {Fore.CYAN}BigramLanguageModel Initialized...{Style.RESET_ALL}")
 
     def forward(self, idx, targets=None):
         """
