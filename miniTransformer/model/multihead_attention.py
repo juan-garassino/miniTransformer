@@ -77,7 +77,10 @@ class MultiHeadAttention(nn.Module):
 
         # Create a module list of self-attention heads
         self.heads = nn.ModuleList(
-            [AttentionHead(head_size, embd_dim, embd_dim, dropout) for _ in range(num_heads)]
+            [
+                AttentionHead(head_size, embd_dim, embd_dim, dropout)
+                for _ in range(num_heads)
+            ]
         )
 
         # Define the output projection linear layer

@@ -4,6 +4,7 @@ from colorama import Fore, Style
 
 from miniTransformer.utils.parse_arguments import parse_arguments
 
+
 def load_data(path):
     """
     Load the text data from all text files in a folder and return their concatenated content.
@@ -14,10 +15,15 @@ def load_data(path):
     Returns:
         text (str): The concatenated content of all text files in the folder.
     """
+
+    print(f"\n✅ {Fore.CYAN}Loading the data...{Style.RESET_ALL}")
+
     # Get a list of all the files in the directory
     files = [file for file in os.listdir(path) if file.endswith(".txt")]
 
-    print(f"\n✅ {Fore.MAGENTA}There is {len(files)} files in the directory{Style.RESET_ALL}")
+    print(
+        f"\n✅ {Fore.MAGENTA}There is {len(files)} files in the directory{Style.RESET_ALL}"
+    )
 
     # Initialize an empty string to store the concatenated content
     text = ""
@@ -30,7 +36,9 @@ def load_data(path):
             with open(os.path.join(path, file_name), "r", encoding="utf-8") as file:
                 text += file.read()
 
-    print(f"\n✅ {Fore.MAGENTA}Length of dataset in characters: {len(text)}{Style.RESET_ALL}")
+    print(
+        f"\n✅ {Fore.MAGENTA}Length of dataset in characters: {len(text)}{Style.RESET_ALL}"
+    )
 
     return text
 
@@ -47,6 +55,11 @@ def create_train_val_splits(encoded_text, train_ratio=0.9):
         train_data (torch.Tensor): A tensor containing the training data.
         val_data (torch.Tensor): A tensor containing the validation data.
     """
+
+    print(
+        f"\n🔄 {Fore.CYAN}Creating training and validation data splits...{Style.RESET_ALL}"
+    )
+
     # Convert the encoded text to a PyTorch tensor
     data = torch.tensor(encoded_text, dtype=torch.long)
 
@@ -93,11 +106,12 @@ if __name__ == "__main__":
 
     args = parse_arguments()
 
-    path = os.path.join(os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/"))
+    path = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/")
+    )
 
-    #print(path)
+    # print(path)
 
     data = load_data(path)
 
-    #print(data[:100])
-
+    # print(data[:100])
