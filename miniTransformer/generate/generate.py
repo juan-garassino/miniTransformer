@@ -4,24 +4,9 @@ import torch
 
 from miniTransformer.model.bigram_language_model import BigramLanguageModel
 from miniTransformer.sourcing.sourcing import load_data
-from miniTransformer.preprocessing.tokenizers.simple_tokenizer import (
-    SimpleTokenizer,
-    CombinedTokenizer,
-)
+from miniTransformer.preprocessing.tokenizers.simple_tokenizer import SimpleTokenizer
 from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
 from miniTransformer.utils.parse_arguments import parse_arguments
-
-# def generate_text(model, int_to_char, device, max_new_tokens=200):
-#     context = torch.zeros((1, 1), dtype=torch.long, device=device)
-
-#     generated_tokens = model.generate_iter(context, max_new_tokens=max_new_tokens)
-
-#     for tokens in generated_tokens:
-#         for token in tokens:
-#             token = token.item()
-#             if token in int_to_char:
-#                 char = int_to_char[token]
-#                 yield char
 
 
 def generate_text(model, decode_fn, device, max_new_tokens=200):
@@ -29,15 +14,10 @@ def generate_text(model, decode_fn, device, max_new_tokens=200):
 
     generated_tokens = model.generate_iter(context, max_new_tokens=max_new_tokens)
 
-    # print(generated_tokens)
-
     for tokens in generated_tokens:
-        # print(tokens)
         for token in tokens:
-            # print(token)
             token = token.item()
             char = decode_fn.decode([token])
-            # print(char)
             yield char
 
 
@@ -82,17 +62,9 @@ def generate_text_from_checkpoint(
 
         model_state_dict = checkpoint["model_state_dict"]
 
-        # data = load_data(data_dir)
-
-        # simple_tokenizer = SimpleTokenizer()
-
-        # _, int_to_char, _ = simple_tokenizer.train(data) # TODO here i need to load the tokenizer
-
-        # regex_tokenizer = RegexTokenizer()
-
         args = parse_arguments()
 
-        combine_tokenizer = CombinedTokenizer()
+        combine_tokenizer = SimpleTokenizer()
 
         path = os.path.join(
             os.environ.get("HOME"),
@@ -102,10 +74,6 @@ def generate_text_from_checkpoint(
         )  # TODO agregar argumento for tokenizers name
 
         vocab_size = combine_tokenizer.load(path)
-
-        # tokenizer_model = '/Users/juan-garassino/Code/juan-garassino/miniNetworks/miniTransformer/results/tokenizers/regex260.model'
-
-        # int_to_char = regex_tokenizer.load(tokenizer_model)
 
         model = BigramLanguageModel(
             vocab_size=vocab_size,  # TODO the saving and loading of the simple tokenizer is not loading well the 'new line'

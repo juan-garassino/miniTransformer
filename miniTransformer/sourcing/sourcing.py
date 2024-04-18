@@ -110,8 +110,4 @@ if __name__ == "__main__":
         os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/")
     )
 
-    # print(path)
-
     data = load_data(path)
-
-    # print(data[:100])
