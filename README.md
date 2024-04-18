@@ -1,73 +1,11 @@
-# Data analysis
-- Document here the project: miniTransformer
-- Description: Project Description
-- Data Source:
-- Type of analysis:
+# miniTransformer
 
-Please document the project the better you can.
+miniTransformer is a small-scale implementation of the Transformer model in Python, designed to be lightweight and easy to understand. This project includes components for training a simplified Transformer model, creating a custom tokenizer, visualizing attention weights, and generating text after training.
 
-# Startup the project
+## Features
 
-The initial setup.
-
-Create virtualenv and install the project:
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
-    pip install pip -U; pip install -r requirements.txt
-```
-
-Unittest test:
-```bash
-make clean install test
-```
-
-Check for miniTransformer in github.com/{group}. If your project is not set please add it:
-
-Create a new project on github.com/{group}/miniTransformer
-Then populate it:
-
-```bash
-##   e.g. if group is "{group}" and project_name is "miniTransformer"
-git remote add origin git@github.com:{group}/miniTransformer.git
-git push -u origin master
-git push -u origin --tags
-```
-
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-miniTransformer-run
-```
-
-# Install
-
-Go to `https://github.com/{group}/miniTransformer` to see the project, manage issues,
-setup you ssh public key, ...
-
-Create a python3 virtualenv and activate it:
-
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
-```
-
-Clone the project and install it:
-
-```bash
-git clone git@github.com:{group}/miniTransformer.git
-cd miniTransformer
-pip install -r requirements.txt
-make clean install test                # install and test
-```
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-miniTransformer-run
-```
+- **Transformer Model**: Implements a simplified version of the Transformer architecture, including self-attention layers and feed-forward networks.
+- **Custom Tokenizer**: Provides functionality to create a custom tokenizer for encoding and decoding text data.
+- **Visualization**: Allows visualization of the attention weights for query (Q), key (K), and value (V) matrices during training.
+- **Text Generation**: Generates text using the trained Transformer model.
+- **Google Colab Notebook**: Includes a Google Colab notebook for running the project in a cloud-based environment.
