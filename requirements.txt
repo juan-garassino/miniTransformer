@@ -1,38 +1,40 @@
-# packaging
-pip>=9
-setuptools>=26
-twine
-wheel>=0.29
-
-# data science
-numpy
-pandas
-scikit-learn
-tensorflow
-torch
-torchvision
-imageio
-matplotlib
-seaborn
-tiktoken
-
-# tests/linter
-black
-coverage
-flake8
-pytest
-pylint
-yapf
-
-# API
-gcsfs
-google-cloud-storage
-mlflow
-s3fs
-
-# utilities
-six>=1.14
-joblib
-memoized-property
-termcolor
-colorama
+colorama==0.4.6 ; python_version >= "3.10" and python_version < "4.0"
+contourpy==1.2.1 ; python_version >= "3.10" and python_version < "4.0"
+cycler==0.12.1 ; python_version >= "3.10" and python_version < "4.0"
+filelock==3.13.4 ; python_version >= "3.10" and python_version < "4.0"
+fonttools==4.51.0 ; python_version >= "3.10" and python_version < "4.0"
+fsspec==2024.3.1 ; python_version >= "3.10" and python_version < "4.0"
+imageio==2.34.1 ; python_version >= "3.10" and python_version < "4.0"
+jinja2==3.1.3 ; python_version >= "3.10" and python_version < "4.0"
+kiwisolver==1.4.5 ; python_version >= "3.10" and python_version < "4.0"
+markupsafe==2.1.5 ; python_version >= "3.10" and python_version < "4.0"
+matplotlib==3.8.4 ; python_version >= "3.10" and python_version < "4.0"
+mpmath==1.3.0 ; python_version >= "3.10" and python_version < "4.0"
+networkx==3.3 ; python_version >= "3.10" and python_version < "4.0"
+numpy==1.26.4 ; python_version >= "3.10" and python_version < "4.0"
+nvidia-cublas-cu12==12.1.3.1 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cuda-cupti-cu12==12.1.105 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cuda-nvrtc-cu12==12.1.105 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cuda-runtime-cu12==12.1.105 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cudnn-cu12==8.9.2.26 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cufft-cu12==11.0.2.54 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-curand-cu12==10.3.2.106 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cusolver-cu12==11.4.5.107 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-cusparse-cu12==12.1.0.106 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-nccl-cu12==2.19.3 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-nvjitlink-cu12==12.4.127 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+nvidia-nvtx-cu12==12.1.105 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version >= "3.10" and python_version < "4.0"
+packaging==24.0 ; python_version >= "3.10" and python_version < "4.0"
+pandas==2.2.2 ; python_version >= "3.10" and python_version < "4.0"
+pillow==10.3.0 ; python_version >= "3.10" and python_version < "4.0"
+pyparsing==3.1.2 ; python_version >= "3.10" and python_version < "4.0"
+python-dateutil==2.9.0.post0 ; python_version >= "3.10" and python_version < "4.0"
+pytz==2024.1 ; python_version >= "3.10" and python_version < "4.0"
+regex==2024.4.16 ; python_version >= "3.10" and python_version < "4.0"
+seaborn==0.13.2 ; python_version >= "3.10" and python_version < "4.0"
+six==1.16.0 ; python_version >= "3.10" and python_version < "4.0"
+sympy==1.12 ; python_version >= "3.10" and python_version < "4.0"
+torch==2.2.2 ; python_version >= "3.10" and python_version < "4.0"
+triton==2.2.0 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version < "3.12" and python_version >= "3.10"
+typing-extensions==4.11.0 ; python_version >= "3.10" and python_version < "4.0"
+tzdata==2024.1 ; python_version >= "3.10" and python_version < "4.0"

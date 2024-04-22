@@ -30,22 +30,22 @@ clean:
 	@rm -fr results/*
 
 run_sourcing:
-	python -m miniTransformer.sourcing.sourcing \
+	poetry run python -m miniTransformer.sourcing.sourcing \
 	--root_dir Code/juan-garassino/miniNetworks/ \
 	--data_dir miniTransformer/data
 
 run_simple_tokenizer:
-	python -m miniTransformer.preprocessing.tokenizers.simple_tokenizer \
+	poetry run python -m miniTransformer.preprocessing.tokenizers.simple_tokenizer \
 	--root_dir Code/juan-garassino/miniNetworks/ \
 	--data_dir miniTransformer/data
 
 run_regex_tokenizer:
-	python -m miniTransformer.preprocessing.tokenizers.regex_tokenizer \
+	poetry run python -m miniTransformer.preprocessing.tokenizers.regex_tokenizer \
 	--root_dir Code/juan-garassino/miniNetworks/ \
 	--data_dir miniTransformer/data
 
 run_training:
-	python -m miniTransformer.main \
+	poetry run python -m miniTransformer.main \
 	--root_dir Code/juan-garassino/miniNetworks/ \
 	--batch_size 16 \
 	--block_size 32 \
