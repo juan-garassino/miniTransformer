@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "miniTransformer"
+version = "0.1.0"
+description = ""
+authors = ["juan garassino <juan.garassino@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+torch = "^2.2.2"
+colorama = "^0.4.6"
+regex = "^2024.4.16"
+imageio = "^2.34.1"
+matplotlib = "^3.8.4"
+seaborn = "^0.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
