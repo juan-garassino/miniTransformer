@@ -11,6 +11,7 @@ from miniTransformer.evaluate.visualize_attention import (
 )
 import sys
 from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
+from miniTransformer.utils.parse_arguments import parse_arguments
 
 
 def save_checkpoint(model, optimizer, epoch, filename):
@@ -39,8 +40,9 @@ def train(
     n_head=4,
     n_layer=4,
     dropout=0.0,
-    colab=0,  # TODO this also needs to be removed
-    path=None,
+    # colab=0,  # TODO this also needs to be removed
+    data_dir=None,
+    tokenizers_dir=None,
     name=None,
     save_interval=25,
     heatmaps_dir=25,
@@ -70,11 +72,9 @@ def train(
     :param heatmap_interval: Interval to save attention heatmaps
     """
 
-    text = load_data(path)
+    text = load_data(data_dir)#.replace(' ', '<SPACE>').replace('\n', '<NEWLINE>')
 
-    project_root = os.environ.get("PROJECT_ROOT")
-
-    results_file_path = os.path.join(project_root, "results", "tokenizers")
+    results_file_path = os.path.join(tokenizers_dir)
 
     name = f"{tokenizer}{vocab_size}"
 
@@ -86,7 +86,10 @@ def train(
         os.makedirs(results_file_path)
 
     if tokenizer == "regex":
-        regex_tokenizer = RegexTokenizer()
+
+        #MY_SPLIT_PATTERN = r"""'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|[<]SPACE[>]|[<]NEWLINE[>]|(?<=\s)[<](?!\S)|(?<=\S)[>](?=\p{L})|\s+"""
+
+        regex_tokenizer = RegexTokenizer()#pattern=MY_SPLIT_PATTERN)
 
         regex_tokenizer.train(text, vocab_size=vocab_size, verbose=True)
 
@@ -186,7 +189,7 @@ def train(
                 model,
                 optimizer,
                 iter,
-                os.path.join(checkpoints_dir, f"checkpoint_{iter}.pt"),
+                os.path.join(checkpoints_dir, f"checkpoint@{iter}_{tokenizer}{vocab_size}.pt"),
             )  # TODO save checkpoint from the model class?
 
         # Evaluation periodically

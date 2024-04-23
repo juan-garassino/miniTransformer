@@ -123,3 +123,5 @@ class Tokenizer:
         self.vocab = self._build_vocab()
 
         print(f"\n🔢 {Fore.CYAN}Loaded mapping dictionaty...{Style.RESET_ALL}")
+
+        return len(self.vocab)
