@@ -65,7 +65,7 @@ if __name__ == "__main__":
             dropout=args.dropout,
             # colab=args.colab,
             data_dir=args.data_dir,
-            name=args.name,
+            # name=args.name,
             heatmap_interval=args.heatmap_interval,
             save_interval=args.save_interval,
             checkpoints_dir=args.checkpoints_dir,

@@ -60,7 +60,6 @@ run_training:
 	--n_layer 4 \
 	--dropout 0.0 \
 	--data_dir $(DATA_DIR) \
-	--name input.txt \
 	--checkpoints_dir $(CHECKPOINTS_DIR) \
 	--tokenizers_dir $(TOKENIZERS_DIR) \
 	--save_interval 100 \

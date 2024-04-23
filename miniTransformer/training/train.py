@@ -23,7 +23,7 @@ def save_checkpoint(model, optimizer, epoch, filename):
     torch.save(checkpoint, filename)
 
     # print(f'\n')
-    print(f"\n\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
+    print(f"\n✅ {Fore.YELLOW}Saved checkpoint at step {epoch}{Style.RESET_ALL}")
 
 
 def train(
@@ -43,12 +43,13 @@ def train(
     # colab=0,  # TODO this also needs to be removed
     data_dir=None,
     tokenizers_dir=None,
-    name=None,
+    # name=None,
     save_interval=25,
     heatmaps_dir=25,
     animations_dir=None,
     checkpoints_dir=None,
     heatmap_interval=25,
+    verbose=False
 ):
     """
     Train the BigramLanguageModel.
@@ -146,13 +147,14 @@ def train(
     total_params = sum(p.numel() for p in m.parameters()) / 1e6
 
     print(
-        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}",
-        end=f"\n\n",
+        f"\n✅ {Fore.MAGENTA}The total number of parameters is {total_params} million{Style.RESET_ALL}"
     )
 
     for iter in range(max_iters):
-        # Sample a batch of data
-        print(f"\r✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}", end=f"")
+
+        if verbose:
+            # Sample a batch of data
+            print(f"\r✅ {Fore.CYAN}Sampling a batch of data...{Style.RESET_ALL}", end=f"")
 
         xb, yb = create_data_batch(
             train_data,
@@ -163,11 +165,12 @@ def train(
             device=device,
         )
 
-        # Evaluate the loss and update the model
-        print(
-            f"\r✅ {Fore.CYAN}Updating the model parameters @ {iter}...{Style.RESET_ALL}",
-            end=f"",
-        )
+        if verbose:
+            # Evaluate the loss and update the model
+            print(
+                f"\r✅ {Fore.CYAN}Updating the model parameters @ {iter}...{Style.RESET_ALL}",
+                end=f"",
+            )
 
         logits, loss = model(xb, yb)
         optimizer.zero_grad(set_to_none=True)
