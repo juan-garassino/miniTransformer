@@ -34,7 +34,7 @@ if __name__ == "__main__":
             generate_text_from_checkpoint(
                 checkpoint=args.checkpoint,
                 checkpoints_dir=args.checkpoints_dir,
-                data_dir=args.data_dir,  # TODO remove data dir from here and just load the pretrained tokenizer
+                #data_dir=args.data_dir,  # TODO remove data dir from here and just load the pretrained tokenizer
                 device=args.device,
                 embd_dim=args.embd_dim,
                 block_size=args.block_size,
@@ -42,7 +42,10 @@ if __name__ == "__main__":
                 n_layer=args.n_layer,
                 dropout=args.dropout,
                 n_of_char=args.n_of_char,
-                vocab_size=args.vocab_size,
+                #vocab_size=args.vocab_size,
+                tokenizer=args.tokenizer,
+                tokenizers_dir=args.tokenizers_dir,
+                root_dir=args.root_dir
             )
     else:
         train(
@@ -51,6 +54,7 @@ if __name__ == "__main__":
             vocab_size=args.vocab_size,
             max_iters=args.max_iters,
             tokenizer=args.tokenizer,
+            tokenizers_dir=args.tokenizers_dir,
             eval_interval=args.eval_interval,
             learning_rate=args.learning_rate,
             device=args.device,
@@ -59,8 +63,8 @@ if __name__ == "__main__":
             n_head=args.n_head,
             n_layer=args.n_layer,
             dropout=args.dropout,
-            colab=args.colab,
-            path=args.data_dir,
+            # colab=args.colab,
+            data_dir=args.data_dir,
             name=args.name,
             heatmap_interval=args.heatmap_interval,
             save_interval=args.save_interval,

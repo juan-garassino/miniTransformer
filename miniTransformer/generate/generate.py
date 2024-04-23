@@ -24,15 +24,18 @@ def generate_text(model, decode_fn, device, max_new_tokens=200):
 def generate_text_from_checkpoint(
     checkpoint=None,
     checkpoints_dir=None,
-    data_dir=None,
+    # data_dir=None,
     device="cpu",
+    root_dir=None,
+    tokenizers_dir=None,
     embd_dim=64,
     block_size=32,
     n_head=4,
     n_layer=4,
     dropout=0.0,
     n_of_char=None,
-    vocab_size=256,
+    # vocab_size=256,
+    tokenizer=None
 ):
     """
     Generate text using a pre-trained model checkpoint.
@@ -62,18 +65,31 @@ def generate_text_from_checkpoint(
 
         model_state_dict = checkpoint["model_state_dict"]
 
-        args = parse_arguments()
+        if tokenizer == 'simple':
 
-        combine_tokenizer = SimpleTokenizer()
+            tokenizer = SimpleTokenizer()
 
-        path = os.path.join(
-            os.environ.get("HOME"),
-            args.root_dir,
-            args.tokenizers_dir.lstrip("/"),
-            "simple140.model",
-        )  # TODO agregar argumento for tokenizers name
+            path = os.path.join(
+                os.environ.get("HOME"),
+                root_dir,
+                tokenizers_dir.lstrip("/"),
+                "simple140.model",
+            )  # TODO agregar argumento for tokenizers name
 
-        vocab_size = combine_tokenizer.load(path)
+            vocab_size = tokenizer.load(path)
+        
+        if tokenizer == 'regex':
+
+            tokenizer = RegexTokenizer()
+
+            path = os.path.join(
+                os.environ.get("HOME"),
+                root_dir,
+                tokenizers_dir.lstrip("/"),
+                "regex512.model",
+            )  # TODO agregar argumento for tokenizers name
+
+            vocab_size = tokenizer.load(path)
 
         model = BigramLanguageModel(
             vocab_size=vocab_size,  # TODO the saving and loading of the simple tokenizer is not loading well the 'new line'
@@ -92,7 +108,7 @@ def generate_text_from_checkpoint(
         print("\nGenerating text:\n")
 
         for char in generate_text(
-            model, combine_tokenizer, device, max_new_tokens=n_of_char
+            model, tokenizer, device, max_new_tokens=n_of_char
         ):
             print(char, end="", flush=True)  # Print other characters without newline
 

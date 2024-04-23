@@ -7,12 +7,16 @@ import os
 import time
 from miniTransformer.preprocessing.tokenizers.basic_tokenizer import BasicTokenizer
 from miniTransformer.preprocessing.tokenizers.regex_tokenizer import RegexTokenizer
+from miniTransformer.utils.parse_arguments import parse_arguments
 
 # Get the project root directory from the environment variable
-project_root = os.environ.get("PROJECT_ROOT")
+args = parse_arguments()
 
+project_root = os.path.join(
+        os.environ.get("HOME"), args.root_dir, args.data_dir.lstrip("/")
+    )
 # Construct the path to the data file
-data_file_path = os.path.join(project_root, "data", "data.txt")
+data_file_path = os.path.join(project_root, "data.txt")
 
 # Open the file and read its contents
 with open(data_file_path, "r", encoding="utf-8") as file:

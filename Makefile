@@ -46,11 +46,11 @@ run_regex_tokenizer:
 
 run_training:
 	poetry run python -m miniTransformer.main \
-	--root_dir Code/juan-garassino/miniNetworks/ \
+	--root_dir $(ROOT_DIR) \
 	--batch_size 16 \
 	--block_size 32 \
 	--vocab_size 260 \
-	--max_iters 100 \
+	--max_iters 500 \
 	--eval_interval 100 \
 	--learning_rate 1e-3 \
 	--device cpu \
@@ -59,25 +59,25 @@ run_training:
 	--n_head 4 \
 	--n_layer 4 \
 	--dropout 0.0 \
-	--colab 0 \
-	--data_dir miniTransformer/data \
+	--data_dir $(DATA_DIR) \
 	--name input.txt \
-	--checkpoints_dir miniTransformer/results/checkpoints \
-	--save_interval 500 \
-	--heatmaps_dir miniTransformer/results/heatmaps \
+	--checkpoints_dir $(CHECKPOINTS_DIR) \
+	--tokenizers_dir $(TOKENIZERS_DIR) \
+	--save_interval 100 \
+	--heatmaps_dir $(HEATMAPS_DIR) \
 	--heatmap_interval 25 \
-	--animations_dir miniTransformer/results/animations \
-	--tokenizer simple
+	--animations_dir $(ANIMATIONS_DIR) \
+	--tokenizer regex
 
 run_generation:
-	python -m miniTransformer.main \
+	poetry run python -m miniTransformer.main \
 	--root_dir code/juan-garassino/miniNetworks/ \
 	--generate \
 	--colab 0 \
 	--checkpoints_dir miniTransformer/results/checkpoints \
-	--checkpoint checkpoint_4999.pt \
+	--checkpoint checkpoint_99.pt \
 	--n_of_char 2000 \
-	--vocab_size 260
+	--tokenizer regex
 
 install:
 	@pip install . -U
