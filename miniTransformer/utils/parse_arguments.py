@@ -24,7 +24,7 @@ def parse_arguments():
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--colab", type=int, default=1)
     parser.add_argument("--data_dir", type=str, default="/miniTransformer/data")
-    parser.add_argument("--name", type=str, default="input.txt")
+    # parser.add_argument("--name", type=str, default="input.txt")
     parser.add_argument("--save_interval", type=int, default=100)
     parser.add_argument(
         "--checkpoints_dir", type=str, default="/miniTransformer/results/checkpoints"
