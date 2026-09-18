@@ -8,4 +8,4 @@
 
 raw_data/
 results/
-data/
+data/*.log
